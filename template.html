@@ -389,6 +389,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .row.saved{opacity:.8}
 
 .src{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#c9b8ff;border:1px dashed rgba(124,92,255,.6);border-radius:99px;padding:1px 8px;white-space:nowrap;cursor:help}
+
+.hl{display:inline-flex;align-items:center;gap:7px;font-size:.74rem;font-weight:700;color:var(--ink);text-decoration:none;padding:3px 10px 3px 3px;border-radius:99px;background:rgba(255,95,69,.12);border:1px solid rgba(255,95,69,.4);transition:background .2s,transform .2s;white-space:nowrap}
+.hl:hover{background:rgba(255,95,69,.25);transform:translateY(-1px)}
+.hl-ic{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent-2),#ff2e63);color:#fff;box-shadow:0 0 0 0 rgba(255,95,69,.6);animation:hlPulse 2s infinite}
+@keyframes hlPulse{70%{box-shadow:0 0 0 7px rgba(255,95,69,0)}100%{box-shadow:0 0 0 0 rgba(255,95,69,0)}}
 </style>
 
 <nav class="nav" id="nav">
@@ -594,6 +599,13 @@ function goals(m){
   const h = side(m.h.id), a = side(m.a.id);
   return `<div class="goals">${ballIc}<div>${h?`<div><em>${esc(m.h.short)}</em> ${h}</div>`:""}${a?`<div><em>${esc(m.a.short)}</em> ${a}</div>`:""}</div></div>`;
 }
+function hlBtn(m){
+  if (m.state === "pre") return "";
+  const day = new Intl.DateTimeFormat("en-CA",{timeZone:"UTC"}).format(m.d);
+  const yt = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${m.h.name} vs ${m.a.name} highlights ${day}`);
+  const href = m.video || yt, src = m.video ? "ESPN" : "YouTube";
+  return `<a class="hl" href="${esc(href)}" target="_blank" rel="noopener" title="Watch highlights on ${src}"><span class="hl-ic"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span>${m.state==="in"?"Watch live clips":"Highlights"}</a>`;
+}
 function rowHtml(m, idx=0){
   const fs = favSide(m), fp = favP(m), [tn, tl] = tierOf(fp), w = winIdx(m.winner);
   const team = (t, i) => `<div class="t ${i*2===fs?"fav":""}">${crest(t)}<span class="tn" title="${esc(t.name)}">${esc(t.name)}</span>${pos(t)}${form(t.form)}${m.score?`<span class="sc">${esc(m.score[i] ?? "")}</span>`:""}</div>`;
@@ -609,7 +621,7 @@ function rowHtml(m, idx=0){
     <div class="teams">${team(m.h,0)}${team(m.a,1)}<div class="league-sm"><span class="ctry">${esc(m.country||"")}</span>${m.country?" · ":""}${esc(m.league)}</div>${m.venue?`<div class="venue" title="${esc(m.venue)}">${pin} ${esc(m.venue)}</div>`:""}${goals(m)}</div>
     <div class="x12w"><div class="x12">${cells}</div>${bar}</div>
     <div class="mk"><div><span>Not to lose</span><b>${pc(dc)}</b></div><div><span>${m.model?"Fair odds":"Win odds"}</span><b>${m.dec[fs].toFixed(2)}</b></div>${ou}</div>
-    <div class="st"><div class="st-top"><span class="tier t${tn}">${tl}</span>${starBtn(m.id)}</div>${m.model?`<span class="src" title="No bookmaker odds for this match. Estimated from each team's goals scored and conceded per game this season, with home advantage.">Model estimate</span>`:""}${status}${m.url?`<span class="status"><a href="${esc(m.url)}" target="_blank" rel="noopener">Match details ↗</a></span>`:""}</div>
+    <div class="st"><div class="st-top"><span class="tier t${tn}">${tl}</span>${starBtn(m.id)}</div>${m.model?`<span class="src" title="No bookmaker odds for this match. Estimated from each team's goals scored and conceded per game this season, with home advantage.">Model estimate</span>`:""}${status}${hlBtn(m)}${m.url?`<span class="status"><a href="${esc(m.url)}" target="_blank" rel="noopener">Match details ↗</a></span>`:""}</div>
   </div>`;
 }
 

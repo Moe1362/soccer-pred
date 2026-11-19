@@ -369,6 +369,7 @@ def main():
             "score": [h.get("score"), a.get("score")] if st.get("state") != "pre" else None,
             "winner": winner,
             "url": next((l["href"] for l in ev.get("links", []) if "desktop" in l.get("rel", [])), ""),
+            "video": next((l["href"] for l in ev.get("links", []) if "/video/" in l.get("href", "")), ""),
         })
 
     matches += tsdb_matches(now)
