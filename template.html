@@ -387,6 +387,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .fav-cta{display:flex;gap:10px;margin-top:6px}
 .fav-cta .cta{border:0;cursor:pointer;animation:none}
 .row.saved{opacity:.8}
+
+.src{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#c9b8ff;border:1px dashed rgba(124,92,255,.6);border-radius:99px;padding:1px 8px;white-space:nowrap;cursor:help}
 </style>
 
 <nav class="nav" id="nav">
@@ -483,12 +485,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <p>Every priced football match worldwide, ranked by the favorite's fair win probability. Updated twice a day.</p>
     </div>
     <div class="foot-col"><h4>App</h4><a href="#board-top">Today's picks</a><a href="#board-top">My favorites</a><a href="#accuracy">Accuracy record</a></div>
-    <div class="foot-col"><h4>Data</h4><a href="https://www.espn.com/soccer/" target="_blank" rel="noopener">ESPN scores &amp; odds ↗</a><span>Odds usually from DraftKings</span><span>Times in US Pacific (PT)</span></div>
+    <div class="foot-col"><h4>Data</h4><a href="https://www.espn.com/soccer/" target="_blank" rel="noopener">ESPN scores &amp; odds ↗</a><span>Odds usually from DraftKings</span><a href="https://www.thesportsdb.com/" target="_blank" rel="noopener">TheSportsDB (Iran, UAE) ↗</a><span>Times in US Pacific (PT)</span></div>
     <div class="foot-col"><h4>Project</h4><a href="https://github.com/Moe1362/soccer-pred" target="_blank" rel="noopener">GitHub repository ↗</a><span id="footUpd"></span></div>
   </div>
   <div class="foot-method">
     <h4>How the numbers work</h4>
-    <p>Bookmaker 1X2 odds are converted to probabilities and the bookmaker margin is removed proportionally, so home, draw and away add up to 100%. "Not to lose" is the favorite's win-or-draw chance. "Win odds" is the bookmaker's decimal price for the favorite. These are estimates, not guarantees: even an 80% favorite fails to win about one match in five. Please bet responsibly, if at all.</p>
+    <p>Bookmaker 1X2 odds are converted to probabilities and the bookmaker margin is removed proportionally, so home, draw and away add up to 100%. Where no bookmaker prices a match (for example the Russian, Iranian and UAE leagues), a model estimate is shown instead: a Poisson model built from each team's goals scored and conceded per game this season, with home advantage. Model estimates are marked and are less reliable than odds. "Not to lose" is the favorite's win-or-draw chance. "Win odds" is the bookmaker's decimal price for the favorite. These are estimates, not guarantees: even an 80% favorite fails to win about one match in five. Please bet responsibly, if at all.</p>
   </div>
   <div class="foot-bar"><span>© 2026 SOCCER Pred</span><span>Not affiliated with ESPN, DraftKings or any club.</span></div>
 </footer>
@@ -606,8 +608,8 @@ function rowHtml(m, idx=0){
     <div class="time"><b>${hm(m.d).replace(/\s?[AP]M$/,"")}</b><small>${hm(m.d).slice(-2)} PT</small></div>
     <div class="teams">${team(m.h,0)}${team(m.a,1)}<div class="league-sm"><span class="ctry">${esc(m.country||"")}</span>${m.country?" · ":""}${esc(m.league)}</div>${m.venue?`<div class="venue" title="${esc(m.venue)}">${pin} ${esc(m.venue)}</div>`:""}${goals(m)}</div>
     <div class="x12w"><div class="x12">${cells}</div>${bar}</div>
-    <div class="mk"><div><span>Not to lose</span><b>${pc(dc)}</b></div><div><span>Win odds</span><b>${m.dec[fs].toFixed(2)}</b></div>${ou}</div>
-    <div class="st"><div class="st-top"><span class="tier t${tn}">${tl}</span>${starBtn(m.id)}</div>${status}${m.url?`<span class="status"><a href="${esc(m.url)}" target="_blank" rel="noopener">Match details ↗</a></span>`:""}</div>
+    <div class="mk"><div><span>Not to lose</span><b>${pc(dc)}</b></div><div><span>${m.model?"Fair odds":"Win odds"}</span><b>${m.dec[fs].toFixed(2)}</b></div>${ou}</div>
+    <div class="st"><div class="st-top"><span class="tier t${tn}">${tl}</span>${starBtn(m.id)}</div>${m.model?`<span class="src" title="No bookmaker odds for this match. Estimated from each team's goals scored and conceded per game this season, with home advantage.">Model estimate</span>`:""}${status}${m.url?`<span class="status"><a href="${esc(m.url)}" target="_blank" rel="noopener">Match details ↗</a></span>`:""}</div>
   </div>`;
 }
 

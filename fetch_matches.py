@@ -8,7 +8,9 @@ Files next to this script: template.html (page), history.json (finished matches)
 data.json (last payload), index.html (published page).
 """
 import json
+import math
 import pathlib
+import time
 import sys
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -123,7 +125,8 @@ def standings(slug):
             tid = (e.get("team") or {}).get("id")
             if tid and st.get("rank"):
                 out[tid] = {"rank": st.get("rank"), "pts": st.get("points"), "gp": st.get("gamesPlayed"),
-                            "of": len(entries), "group": g.get("name") if len(groups) > 1 else ""}
+                            "of": len(entries), "group": g.get("name") if len(groups) > 1 else "",
+                            "gf": st.get("pointsFor"), "ga": st.get("pointsAgainst")}
     return out
 
 
@@ -176,6 +179,117 @@ def messi():
             "seasonGoals": sum(g["g"] for g in games), "seasonAssists": sum(g["a"] for g in games), "seasonGames": len(games)}
 
 
+# ---------- model estimate for matches without bookmaker odds ----------
+HOME_ADV = 1.12   # home sides score about 12% more, away sides about 12% less
+
+
+def _num(v):
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def model_probs(table, hid, aid):
+    """1X2 + over/under from a Poisson model built on each team's goals for/against per game,
+    shrunk toward the league average (5 virtual average games), with home advantage."""
+    rows = [r for r in table.values() if _num(r.get("gp"))]
+    th, ta = table.get(hid), table.get(aid)
+    if not th or not ta or len(rows) < 4:
+        return None
+    games = sum(_num(r["gp"]) for r in rows)
+    goals = sum(_num(r.get("gf")) or 0 for r in rows)
+    if games < 8 or goals <= 0:
+        return None
+    mu = goals / games                                  # goals per team per game
+    def rating(r, key):
+        gp, g = _num(r.get("gp")) or 0, _num(r.get(key)) or 0
+        return (g + 5 * mu) / (gp + 5) / mu
+    lh = mu * rating(th, "gf") * rating(ta, "ga") * HOME_ADV
+    la = mu * rating(ta, "gf") * rating(th, "ga") / HOME_ADV
+    pois = lambda l, k: math.exp(-l) * l ** k / math.factorial(k)
+    ph = pd = pa = over = 0.0
+    for i in range(11):
+        for j in range(11):
+            q = pois(lh, i) * pois(la, j)
+            if i > j: ph += q
+            elif i == j: pd += q
+            else: pa += q
+            if i + j >= 3: over += q
+    tot = ph + pd + pa
+    p = [round(ph / tot * 100, 1), round(pd / tot * 100, 1), round(pa / tot * 100, 1)]
+    return {"p": p, "dec": [round(100 / x, 2) for x in p], "margin": 0, "src": "Model",
+            "model": True, "ou": {"line": 2.5, "pOver": round(over / tot * 100, 1)}, "xg": [round(lh, 2), round(la, 2)]}
+
+
+# ---------- TheSportsDB: leagues ESPN does not cover ----------
+TSDB = "https://www.thesportsdb.com/api/v1/json/123/"
+TSDB_LEAGUES = {"4742": ("Persian Gulf Pro League", "Iran"), "4678": ("UAE Pro League", "UAE")}
+
+
+def tsdb(path):
+    time.sleep(1.2)                                   # free key: stay well under the rate limit
+    try:
+        return get(TSDB + path)
+    except Exception as e:
+        print("thesportsdb failed", path, e, file=sys.stderr)
+        return {}
+
+
+def tsdb_matches(now):
+    out = []
+    for lid, (lname, country) in TSDB_LEAGUES.items():
+        day_events = {}
+        for k in range(-2, 4):
+            d = (now.date() + timedelta(days=k)).isoformat()
+            for e in tsdb(f"eventsday.php?d={d}&l={lid}").get("events") or []:
+                day_events[e["idEvent"]] = e
+        if not day_events:
+            continue
+        season = next(iter(day_events.values())).get("strSeason")
+        last_round = max(int(e.get("intRound") or 0) for e in day_events.values())
+        # rebuild the full table from this season's results (the free key only returns a top-5 table)
+        tab = {}
+        for r in range(1, last_round + 1):
+            for e in tsdb(f"eventsround.php?id={lid}&r={r}&s={season}").get("events") or []:
+                hs, as_ = _num(e.get("intHomeScore")), _num(e.get("intAwayScore"))
+                if hs is None or as_ is None or "Not Started" in (e.get("strStatus") or ""):
+                    continue
+                for tid, name, gf, ga in ((e["idHomeTeam"], e["strHomeTeam"], hs, as_), (e["idAwayTeam"], e["strAwayTeam"], as_, hs)):
+                    t = tab.setdefault(tid, {"name": name, "gp": 0, "gf": 0, "ga": 0, "pts": 0, "w": 0, "form": ""})
+                    t["gp"] += 1; t["gf"] += gf; t["ga"] += ga
+                    t["pts"] += 3 if gf > ga else 1 if gf == ga else 0
+                    t["form"] = (t["form"] + ("W" if gf > ga else "D" if gf == ga else "L"))[-5:]
+        order = sorted(tab.items(), key=lambda kv: (-kv[1]["pts"], -(kv[1]["gf"] - kv[1]["ga"]), -kv[1]["gf"]))
+        table = {tid: {"rank": str(i + 1), "pts": str(t["pts"]), "gp": str(t["gp"]), "of": len(order), "group": "",
+                       "gf": str(t["gf"]), "ga": str(t["ga"])} for i, (tid, t) in enumerate(order)}
+        for e in day_events.values():
+            hid, aid = e["idHomeTeam"], e["idAwayTeam"]
+            odds = model_probs(table, hid, aid)
+            if not odds:
+                continue
+            ts = e.get("strTimestamp") or f'{e.get("dateEvent")}T{e.get("strTime") or "00:00:00"}'
+            ts = ts.replace("+00:00", "")[:16] + "Z"
+            status = e.get("strStatus") or ""
+            hs, as_ = e.get("intHomeScore"), e.get("intAwayScore")
+            done = status in ("Match Finished", "FT", "AET", "PEN") or (hs not in (None, "") and ts < now.isoformat()[:16] and status not in ("Not Started", "NS"))
+            live = status in ("1H", "2H", "HT", "ET", "Live", "In Progress")
+            state = "post" if done else "in" if live else "pre"
+            winner = ""
+            if state == "post" and hs not in (None, ""):
+                winner = "home" if int(hs) > int(as_) else "away" if int(as_) > int(hs) else "draw"
+            mk = lambda tid, name: {"id": tid, "name": name, "short": name, "abbr": "".join(w[0] for w in name.split()[:3]).upper() if len(name.split()) > 1 else name[:3].upper(),
+                                    "color": "", "alt": "", "form": (tab.get(tid) or {}).get("form", ""),
+                                    "rec": "", "pos": table.get(tid)}
+            out.append({"id": "tsdb" + e["idEvent"], "ts": ts, "league": lname, "country": country,
+                        "h": mk(hid, e["strHomeTeam"]), "a": mk(aid, e["strAwayTeam"]),
+                        "venue": ", ".join(x for x in (e.get("strVenue"), e.get("strCity"), country) if x),
+                        "goals": [], "p": odds["p"], "dec": odds["dec"], "margin": 0, "ou": odds["ou"], "src": "Model", "model": True,
+                        "state": state, "clock": "", "detail": status, "score": [hs, as_] if state != "pre" else None,
+                        "winner": winner, "url": ""})
+    return out
+
+
 def team(c):
     t = c.get("team") or {}
     rec = next((r.get("summary") for r in c.get("records") or [] if r.get("type") == "total"), "")
@@ -218,13 +332,6 @@ def main():
         sides = {c.get("homeAway"): c for c in comp.get("competitors", [])}
         if "home" not in sides or "away" not in sides:
             continue
-        odds = parse_odds(comp.get("odds"))
-        if odds:
-            cache[ev["id"]] = dict(odds, ts=ev["date"])
-        else:
-            odds = cache.get(ev["id"])
-        if not odds:
-            continue
         st = comp["status"]["type"]
         h, a = sides["home"], sides["away"]
         lid = ev.get("uid", "").split("~l:")[-1].split("~")[0]
@@ -232,6 +339,17 @@ def main():
         if slug and slug not in table_cache:
             table_cache[slug] = standings(slug)
         table = table_cache.get(slug, {})
+        odds = parse_odds(comp.get("odds"))
+        if odds:
+            cache[ev["id"]] = dict(odds, ts=ev["date"])
+        else:
+            odds = cache.get(ev["id"])
+        if not odds:   # no bookmaker price (e.g. Russian league): fall back to the table-based model
+            odds = model_probs(table, (h.get("team") or {}).get("id"), (a.get("team") or {}).get("id"))
+            if odds:
+                cache[ev["id"]] = dict(odds, ts=ev["date"])
+        if not odds:
+            continue
         venue = comp.get("venue") or {}
         addr = venue.get("address") or {}
         winner = "home" if h.get("winner") else "away" if a.get("winner") else ("draw" if st.get("completed") else "")
@@ -244,7 +362,7 @@ def main():
             "country": COUNTRY.get(slug.split(".")[0], "") if slug else "",
             "venue": ", ".join(x for x in (venue.get("fullName"), addr.get("city"), addr.get("country")) if x),
             "goals": scorers(comp),
-            "p": odds["p"], "dec": odds["dec"], "margin": odds["margin"], "ou": odds.get("ou"), "src": odds["src"],
+            "p": odds["p"], "dec": odds["dec"], "margin": odds["margin"], "ou": odds.get("ou"), "src": odds["src"], "model": bool(odds.get("model")),
             "state": st.get("state"),
             "clock": comp["status"].get("displayClock", ""),
             "detail": st.get("shortDetail", ""),
@@ -252,6 +370,8 @@ def main():
             "winner": winner,
             "url": next((l["href"] for l in ev.get("links", []) if "desktop" in l.get("rel", [])), ""),
         })
+
+    matches += tsdb_matches(now)
 
     # running record of finished matches, used for the accuracy table
     hist_path = HERE / "history.json"
@@ -261,7 +381,7 @@ def main():
         hist = {}
     cutoff = (now - timedelta(days=HISTORY_DAYS)).isoformat()
     for m in matches:
-        if m["state"] == "post" and m["winner"]:
+        if m["state"] == "post" and m["winner"] and not m.get("model"):
             hist[m["id"]] = {"ts": m["ts"], "p": m["p"], "w": m["winner"],
                              "lg": m["league"], "n": f'{m["h"]["short"]} - {m["a"]["short"]}',
                              "s": m["score"]}
