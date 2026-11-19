@@ -219,24 +219,142 @@ body{padding-block:0 56px}
 .goals .g b{color:var(--accent);font-weight:600}
 .goals > div{display:flex;flex-direction:column;gap:2px;min-width:0}
 .goals > div > div{display:flex;flex-wrap:wrap;column-gap:2px}
+
+/* navbar */
+html{scroll-behavior:smooth;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:rgba(7,9,12,.85)}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));background:rgba(7,9,12,.55);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid rgba(255,255,255,.06);animation:navIn .6s cubic-bezier(.2,.7,.2,1) both}
+.nav-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:20px;padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px))}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;flex:none}
+.brand .mark svg{width:20px;height:20px}
+.bname{font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:-.01em;white-space:nowrap}
+.bname span{color:var(--accent)}
+.links{display:flex;gap:4px;margin-left:auto}
+.links a{position:relative;color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:500;padding:6px 12px;border-radius:8px;transition:color .2s,background .2s}
+.links a:hover{color:var(--ink);background:rgba(255,255,255,.05)}
+.links a::after{content:"";position:absolute;left:12px;right:12px;bottom:2px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.links a:hover::after,.links a.on::after{transform:scaleX(1)}
+.links a.on{color:var(--ink)}
+.acct{display:flex;align-items:center;gap:10px}
+.signin{border:1px solid rgba(255,200,61,.45);background:rgba(255,200,61,.08);color:var(--accent);font-weight:700;font-size:.85rem;padding:7px 16px;border-radius:99px;cursor:pointer;transition:background .2s,transform .15s}
+.signin:hover{background:rgba(255,200,61,.18);transform:translateY(-1px)}
+.who{display:flex;align-items:center;gap:8px;font-size:.85rem;padding:3px 12px 3px 3px;border-radius:99px;border:1px solid var(--line);background:var(--raise);animation:pop .4s both}
+.who img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.who small{display:block;color:var(--faint);font-size:.66rem;line-height:1.1}
+.who b{display:block;font-weight:600;line-height:1.2;max-width:12ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:4px}
+.burger span{display:block;width:20px;height:2px;border-radius:2px;background:var(--ink);transition:transform .25s,opacity .25s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+@media (max-width:760px){
+  .burger{display:flex}
+  .acct{margin-left:auto}
+  .links{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;margin:0;padding:8px max(16px,env(safe-area-inset-left,0px));background:rgba(7,9,12,.96);border-bottom:1px solid var(--line);transform:translateY(-8px);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+  .links.open{opacity:1;transform:none;pointer-events:auto}
+  .links a{padding:12px}
+  .who b,.who small{display:none}.who{padding:3px}
+}
+/* sign-in panel */
+.auth[hidden],[hidden]{display:none!important}
+.auth{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);animation:fadeIn .2s both}
+.auth-card{position:relative;max-width:400px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;animation:blurIn .4s both}
+.auth-card h3{margin:0;font-family:var(--display);font-size:1.3rem}
+.auth-card p{margin:0;color:var(--muted);font-size:.9rem}
+.auth-x{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font-size:1.4rem;cursor:pointer}
+
+/* hero grid + Messi card */
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(24px,4vw,48px);align-items:center}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.hero-in{padding-top:clamp(28px,5vw,56px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px}
+#hello{display:block;font-size:.42em;color:var(--muted);font-weight:600;letter-spacing:0;margin-bottom:10px}
+#hello:empty{display:none}
+.messi{position:relative;border-radius:20px;padding:22px;background:linear-gradient(160deg,rgba(124,92,255,.18),rgba(15,19,24,.85) 45%,rgba(255,95,69,.14));border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);overflow:hidden;animation:blurIn .9s .25s cubic-bezier(.2,.7,.2,1) both;box-shadow:0 30px 80px -30px rgba(124,92,255,.45)}
+.messi::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:conic-gradient(from var(--ang),transparent 0 70%,var(--accent) 80%,var(--accent-2) 90%,transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spinBorder 6s linear infinite;pointer-events:none}
+.mx-top{display:flex;align-items:center;gap:14px}
+.jersey{width:64px;height:64px;flex:none;position:relative;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.6rem;color:#fff;
+  background:linear-gradient(90deg,#f7b5cd 0 18%,#231f20 18% 82%,#f7b5cd 82%);clip-path:polygon(22% 0,38% 8%,62% 8%,78% 0,100% 18%,88% 36%,82% 30%,82% 100%,18% 100%,18% 30%,12% 36%,0 18%);animation:float 4s ease-in-out infinite}
+.mx-name{font-family:var(--display);font-size:1.35rem;font-weight:700;line-height:1.1}
+.mx-sub{color:var(--muted);font-size:.8rem}
+.mx-live{margin-left:auto;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);border:1px solid rgba(255,200,61,.35);border-radius:99px;padding:3px 8px;white-space:nowrap}
+.mx-big{display:flex;align-items:flex-end;gap:12px;margin:18px 0 6px}
+.mx-big .n{font-family:var(--display);font-size:clamp(3.6rem,8vw,5rem);font-weight:700;line-height:.9;background:linear-gradient(180deg,#fff,var(--accent) 70%,var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mx-big .l{color:var(--muted);font-size:.85rem;padding-bottom:8px}
+.mx-big .l b{display:block;color:var(--ink);font-size:1rem}
+.mx-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.mx-stats div{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px;text-align:center}
+.mx-stats b{display:block;font-family:var(--display);font-size:1.15rem}
+.mx-stats small{color:var(--faint);font-size:.66rem;text-transform:uppercase;letter-spacing:.05em}
+.mx-h{margin:16px 0 8px;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+.mx-games{display:flex;flex-direction:column;gap:6px}
+.mg{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto;gap:10px;align-items:center;font-size:.8rem;padding:6px 8px;border-radius:9px;background:rgba(255,255,255,.03);animation:rise .4s both;animation-delay:calc(600ms + var(--k)*80ms)}
+.mg .r{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:.7rem;color:#0b0b0b}
+.mg .r.W{background:var(--win)}.mg .r.D{background:var(--draw)}.mg .r.L{background:var(--loss)}
+.mg .o{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.mg .o b{color:var(--ink);font-weight:600}
+.mg .ga{display:flex;gap:4px}
+.mg .ga span{font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:5px;background:rgba(255,200,61,.15);color:var(--accent)}
+.mg .ga span.as{background:rgba(124,92,255,.2);color:#c9b8ff}
+.mg .sc{font-weight:700}
+.mx-next{margin-top:12px;font-size:.8rem;color:var(--muted);padding:8px 10px;border-radius:10px;border:1px dashed rgba(255,255,255,.12)}
+.mx-next b{color:var(--ink)}
+
+/* footer */
+.footer{margin-top:40px;margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));margin-bottom:-56px;border-top:1px solid var(--line);background:linear-gradient(180deg,var(--bg),#05070a);position:relative;overflow:hidden}
+.footer::before{content:"";position:absolute;left:50%;top:-1px;width:60%;height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,var(--accent),var(--accent-2),transparent);animation:sweep 5s ease-in-out infinite alternate}
+.foot-in,.foot-method,.foot-bar{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.foot-in{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:24px;padding-block:36px 20px}
+@media (max-width:760px){.foot-in{grid-template-columns:1fr 1fr}.foot-brand{grid-column:1/-1}}
+.foot-brand p{color:var(--muted);font-size:.84rem;max-width:36ch;margin:12px 0 0}
+.foot-col{display:flex;flex-direction:column;gap:8px;font-size:.84rem;min-width:0}
+.foot-col h4,.foot-method h4{margin:0 0 4px;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);font-weight:600}
+.foot-col a{color:var(--muted);text-decoration:none;transition:color .2s}
+.foot-col a:hover{color:var(--accent)}
+.foot-col span{color:var(--faint)}
+.foot-method{padding-block:8px 20px}
+.foot-method p{margin:0;color:var(--faint);font-size:.78rem;line-height:1.7;max-width:90ch}
+.foot-bar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-block:16px calc(20px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);font-size:.74rem;color:var(--faint)}
+
+@keyframes navIn{from{transform:translateY(-100%)}to{transform:none}}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes float{50%{transform:translateY(-4px) rotate(-2deg)}}
+@keyframes sweep{from{width:20%}to{width:80%}}
 </style>
 
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#hero" aria-label="SOCCER Pred home"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.6 2.6-1.4 4.2H9.8L8.4 10.1z" fill="var(--accent-ink)"/><path d="M12 3v4.5M20.6 9.2l-5 0.9M17.3 19.4l-3.1-5.1M6.7 19.4l3.1-5.1M3.4 9.2l5 0.9"/></svg></span><span class="bname">SOCCER <span>Pred</span></span></a>
+    <div class="links" id="links">
+      <a href="#board-top">Picks</a><a href="#messi">Messi</a><a href="#accuracy">Accuracy</a><a href="#method">Method</a>
+    </div>
+    <div class="acct" id="acct">
+      <button class="signin" id="signin" type="button">Sign in</button>
+    </div>
+    <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="auth" id="authPanel" hidden>
+  <div class="auth-card" role="dialog" aria-labelledby="authTitle">
+    <button class="auth-x" id="authClose" type="button" aria-label="Close">×</button>
+    <h3 id="authTitle">Sign in to SOCCER Pred</h3>
+    <p id="authMsg">SOCCER Pred signs you in with your Claude account. Open this page from claude.ai while signed in and your name appears here automatically.</p>
+    <a class="cta" href="https://claude.ai/login" target="_blank" rel="noopener"><span>Continue with Claude</span></a>
+  </div>
+</div>
 <section class="hero" id="hero">
   <canvas id="fx" aria-hidden="true"></canvas>
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="hero-in">
-  <header class="head">
-    <div class="brand">
-      <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.6 2.6-1.4 4.2H9.8L8.4 10.1z" fill="var(--accent-ink)"/><path d="M12 3v4.5M20.6 9.2l-5 0.9M17.3 19.4l-3.1-5.1M6.7 19.4l3.1-5.1M3.4 9.2l5 0.9"/></svg></div>
-      <div><h1>SOCCER <span>Pred</span></h1><p>Every priced football match worldwide, ranked by win probability</p></div>
-    </div>
-    <div class="updated"><span class="dot"></span><span id="updated"></span></div>
-  </header>
-    <div class="hero-copy">
-      <span class="eyebrow">Odds-based football predictions · updated twice daily</span>
-      <h2 class="headline">Today's <span class="grad">surest wins</span>,<br>from every league on earth.</h2>
-      <p class="lede">Bookmaker odds turned into fair win probabilities for every priced match worldwide, ranked so the strongest favorites come first.</p>
-      <a class="cta" href="#board-top"><span>See today's picks</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="dot"></span> <span id="updated">Odds-based football predictions</span></span>
+        <h2 class="headline"><span id="hello"></span>Today's <span class="grad">surest wins</span>,<br>from every league on earth.</h2>
+        <p class="lede">Bookmaker odds turned into fair win probabilities for every priced match worldwide, ranked so the strongest favorites come first.</p>
+        <a class="cta" href="#board-top"><span>See today's picks</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+      </div>
+      <aside class="messi" id="messi" aria-label="Lionel Messi this season"></aside>
     </div>
   </div>
   <div class="marquee" aria-label="Top upcoming picks"><div class="track" id="track"></div></div>
@@ -261,19 +379,31 @@ body{padding-block:0 56px}
     <div id="rows"></div>
   </section>
 
-  <section class="panel">
+  <section class="panel" id="accuracy">
     <h2>Prediction accuracy</h2>
     <p id="calNote"></p>
     <div class="tablewrap"><table class="cal" id="cal"></table></div>
   </section>
 
-  <p class="foot">
-    Method: bookmaker 1X2 odds (usually DraftKings, via ESPN) are converted to probabilities and the bookmaker margin is removed proportionally so the three outcomes add up to 100%.
-    "Not to lose" is the favorite's win-or-draw chance. "Win odds" is the bookmaker's own decimal price for the favorite.
-    All times are US Pacific (PT). Match status reflects the last update.
-    These numbers are estimates, not guarantees: even an 80% favorite fails to win about one match in five.
-  </p>
+
 </div>
+
+<footer class="footer" id="method">
+  <div class="foot-in">
+    <div class="foot-brand">
+      <a class="brand" href="#hero"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.6 2.6-1.4 4.2H9.8L8.4 10.1z" fill="var(--accent-ink)"/><path d="M12 3v4.5M20.6 9.2l-5 0.9M17.3 19.4l-3.1-5.1M6.7 19.4l3.1-5.1M3.4 9.2l5 0.9"/></svg></span><span class="bname">SOCCER <span>Pred</span></span></a>
+      <p>Every priced football match worldwide, ranked by the favorite's fair win probability. Updated twice a day.</p>
+    </div>
+    <div class="foot-col"><h4>App</h4><a href="#board-top">Today's picks</a><a href="#messi">Messi tracker</a><a href="#accuracy">Accuracy record</a></div>
+    <div class="foot-col"><h4>Data</h4><a href="https://www.espn.com/soccer/" target="_blank" rel="noopener">ESPN scores &amp; odds ↗</a><span>Odds usually from DraftKings</span><span>Times in US Pacific (PT)</span></div>
+    <div class="foot-col"><h4>Project</h4><a href="https://github.com/Moe1362/soccer-pred" target="_blank" rel="noopener">GitHub repository ↗</a><span id="footUpd"></span></div>
+  </div>
+  <div class="foot-method">
+    <h4>How the numbers work</h4>
+    <p>Bookmaker 1X2 odds are converted to probabilities and the bookmaker margin is removed proportionally, so home, draw and away add up to 100%. "Not to lose" is the favorite's win-or-draw chance. "Win odds" is the bookmaker's decimal price for the favorite. These are estimates, not guarantees: even an 80% favorite fails to win about one match in five. Please bet responsibly, if at all.</p>
+  </div>
+  <div class="foot-bar"><span>© 2026 SOCCER Pred</span><span>Not affiliated with ESPN, DraftKings or any club.</span></div>
+</footer>
 
 <script>
 const DATA = /*__DATA__*/null;
@@ -432,7 +562,8 @@ function countUp(){
 
 if (DATA) {
   const g = new Date(DATA.generated);
-  $("updated").textContent = "Updated " + new Intl.DateTimeFormat("en-US",{timeZone:TZ,weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}).format(g) + " PT";
+  $("footUpd").textContent = "Data updated " + new Intl.DateTimeFormat("en-US",{timeZone:TZ,month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}).format(g) + " PT";
+  $("updated").textContent = "Live odds · updated " + new Intl.DateTimeFormat("en-US",{timeZone:TZ,weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}).format(g) + " PT";
 }
 $("league").onchange = e => { st.league = e.target.value; render(); };
 $("q").oninput = e => { st.q = e.target.value.trim(); render(); };
@@ -482,4 +613,68 @@ render();
 
 /* spotlight following the cursor on match rows */
 $("rows").addEventListener("pointermove", e => { const r = e.target.closest(".row"); if (!r) return; const b = r.getBoundingClientRect(); r.style.setProperty("--mx", (e.clientX-b.left)+"px"); r.style.setProperty("--my", (e.clientY-b.top)+"px"); });
+
+/* Messi hero card */
+(function(){
+  const M = DATA?.messi, el = $("messi");
+  if (!M) { el.hidden = true; return; }
+  const gpg = M.seasonGames ? (M.seasonGoals / M.seasonGames).toFixed(2) : "–";
+  const last = M.games.slice(0,5);
+  const next = ms.filter(m => m.state === "pre" && (m.h.id === M.teamId || m.a.id === M.teamId)).sort((a,b)=>a.d-b.d)[0];
+  const nextHtml = next ? (() => { const home = next.h.id === M.teamId, opp = home ? next.a : next.h, pM = next.p[home?0:2];
+    return `<div class="mx-next">Next: <b>${esc(M.team)}</b> ${home?"vs":"at"} <b>${esc(opp.name)}</b> · ${esc(dayLabel(next.key)[0])} ${hm(next.d)} PT · win chance <b>${pc(pM)}</b></div>`; })() : "";
+  el.innerHTML = `
+    <div class="mx-top"><div class="jersey" aria-hidden="true">${esc(M.jersey||"10")}</div>
+      <div><div class="mx-name">${esc(M.name)}</div><div class="mx-sub">${esc(M.team)} · ${esc(M.pos||"")}${M.age?` · age ${M.age}`:""}</div></div>
+      <span class="mx-live">Season</span></div>
+    <div class="mx-big"><span class="n" data-count="${esc(M.goals)}">${esc(M.goals)}</span><span class="l"><b>goals</b>this MLS season</span></div>
+    <div class="mx-stats">
+      <div><b data-count="${esc(M.assists)}">${esc(M.assists)}</b><small>Assists</small></div>
+      <div><b>${esc(M.apps)}</b><small>Apps (sub)</small></div>
+      <div><b>${gpg}</b><small>Goals / game</small></div>
+      <div><b data-count="${esc(M.shots)}">${esc(M.shots)}</b><small>Shots</small></div>
+    </div>
+    <div class="mx-h">Last ${last.length} matches</div>
+    <div class="mx-games">${last.map((g,k)=>`<div class="mg" style="--k:${k}"><span class="r ${esc(g.res)}">${esc(g.res)}</span>
+      <span class="o">${g.at==="@"?"at":"vs"} <b>${esc(g.opp)}</b> · ${new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",timeZone:TZ}).format(new Date(g.date))}</span>
+      <span class="ga">${g.g?`<span>${g.g} G</span>`:""}${g.a?`<span class="as">${g.a} A</span>`:""}</span><span class="sc">${esc(g.score)}</span></div>`).join("")}</div>
+    ${nextHtml}`;
+  if (!reduce) el.querySelectorAll("[data-count]").forEach(n => { const end = parseInt(n.dataset.count,10); if (!end) return; const t0 = performance.now()+500;
+    const step = now => { const k = Math.min(1, Math.max(0,(now-t0)/1200)), e = 1-Math.pow(1-k,4); n.textContent = Math.round(end*e); if (k<1) requestAnimationFrame(step); };
+    n.textContent = "0"; requestAnimationFrame(step); });
+})();
+
+/* navbar: mobile menu + active section */
+(function(){
+  const b = $("burger"), L = $("links");
+  b.onclick = () => { const o = L.classList.toggle("open"); b.setAttribute("aria-expanded", o); };
+  L.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { L.classList.remove("open"); b.setAttribute("aria-expanded", false); }));
+  const secs = ["board-top","messi","accuracy","method"].map(id => document.getElementById(id)).filter(Boolean);
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) L.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#"+e.target.id)); }), {rootMargin:"-40% 0px -55% 0px"});
+    secs.forEach(s => io.observe(s));
+  }
+})();
+
+/* sign-in: Claude account through the artifact's user capability */
+(function(){
+  const box = $("acct"), panel = $("authPanel");
+  $("signin").onclick = () => { panel.hidden = false; };
+  $("authClose").onclick = () => { panel.hidden = true; };
+  panel.addEventListener("click", e => { if (e.target === panel) panel.hidden = true; });
+  addEventListener("keydown", e => { if (e.key === "Escape") panel.hidden = true; });
+  const use = window.claude && window.claude.use;
+  if (!use) { $("authMsg").textContent = "Accounts work in the Claude-hosted version of SOCCER Pred, which signs you in with your Claude account. This public copy is read-only."; return; }
+  window.claude.use("user").then(async user => {
+    if (!user) return;
+    const me = await user.me();
+    if (!me || !me.id) return;
+    const name = me.name || "Signed in";
+    const who = document.createElement("div"); who.className = "who"; who.title = "Signed in with your Claude account";
+    const img = document.createElement("img"); img.alt = ""; img.src = me.avatarUrl;
+    const txt = document.createElement("div"); const sm = document.createElement("small"); sm.textContent = "Signed in"; const bn = document.createElement("b"); bn.textContent = name;
+    txt.append(sm, bn); who.append(img, txt); box.replaceChildren(who);
+    if (me.name) { $("hello").textContent = "Welcome back, " + me.name.split(" ")[0] + "."; }
+  }).catch(() => {});
+})();
 </script>

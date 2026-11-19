@@ -139,6 +139,43 @@ def scorers(comp):
     return goals
 
 
+MESSI = "https://site.api.espn.com/apis/common/v3/sports/soccer/athletes/45843"
+
+
+def messi():
+    """Season summary and last matches for Lionel Messi (ESPN athlete 45843)."""
+    try:
+        a = get(MESSI)["athlete"]
+        gl = get(MESSI + "/gamelog")
+    except Exception as e:
+        print("messi fetch failed", e, file=sys.stderr)
+        return None
+    summ = a.get("statsSummary") or {}
+    stats = {x.get("name"): x.get("displayValue") for x in summ.get("statistics", [])}
+    names = gl.get("names") or []
+    per = {}
+    for stype in gl.get("seasonTypes", []):
+        for cat in stype.get("categories", []):
+            for ev in cat.get("events", []):
+                per[ev["eventId"]] = dict(zip(names, ev.get("stats", [])))
+    games = []
+    for eid, ev in (gl.get("events") or {}).items():
+        st = per.get(eid, {})
+        games.append({"date": ev.get("gameDate", ""), "opp": (ev.get("opponent") or {}).get("displayName", ""),
+                      "oppAbbr": (ev.get("opponent") or {}).get("abbreviation", ""), "at": ev.get("atVs", ""),
+                      "score": ev.get("score", ""), "res": ev.get("gameResult", ""), "lg": ev.get("leagueShortName", ""),
+                      "g": int(st.get("totalGoals") or 0), "a": int(st.get("goalAssists") or 0),
+                      "sh": int(st.get("totalShots") or 0)})
+    games.sort(key=lambda g: g["date"], reverse=True)
+    team = a.get("team") or {}
+    return {"name": a.get("displayName"), "team": team.get("displayName"), "teamId": team.get("id"),
+            "jersey": a.get("jersey"), "pos": (a.get("position") or {}).get("displayName"), "age": a.get("age"),
+            "season": summ.get("displayName", ""), "apps": stats.get("starts-subIns", ""),
+            "goals": stats.get("totalGoals", ""), "assists": stats.get("goalAssists", ""),
+            "shots": stats.get("totalShots", ""), "games": games[:8],
+            "seasonGoals": sum(g["g"] for g in games), "seasonAssists": sum(g["a"] for g in games), "seasonGames": len(games)}
+
+
 def team(c):
     t = c.get("team") or {}
     rec = next((r.get("summary") for r in c.get("records") or [] if r.get("type") == "total"), "")
@@ -238,7 +275,7 @@ def main():
     matches = [m for m in matches if m["ts"] >= lo]
     matches.sort(key=lambda m: m["ts"])
     payload = {"generated": now.isoformat(timespec="minutes"), "matches": matches,
-               "history": [[v["ts"], v["p"], v["w"]] for v in hist.values()]}
+               "history": [[v["ts"], v["p"], v["w"]] for v in hist.values()], "messi": messi()}
     (HERE / "data.json").write_text(json.dumps(payload, ensure_ascii=False))
     tpl = (HERE / "template.html").read_text()
     html = tpl.replace("/*__DATA__*/null", json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"))
