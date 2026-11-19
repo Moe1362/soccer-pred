@@ -85,10 +85,64 @@ def parse_odds(odds):
     return None
 
 
+COUNTRY = {"afc": "Asia", "aff": "Southeast Asia", "arg": "Argentina", "aus": "Australia", "aut": "Austria",
+    "bel": "Belgium", "bol": "Bolivia", "bra": "Brazil", "caf": "Africa", "campeones": "International",
+    "can": "Canada", "chi": "Chile", "chn": "China", "club": "International", "col": "Colombia",
+    "concacaf": "North & Central America", "conmebol": "South America", "crc": "Costa Rica", "den": "Denmark",
+    "ecu": "Ecuador", "eng": "England", "esp": "Spain", "fifa": "International", "fra": "France",
+    "friendly": "International", "ger": "Germany", "global": "International", "gre": "Greece",
+    "gua": "Guatemala", "hon": "Honduras", "ind": "India", "ita": "Italy", "jpn": "Japan",
+    "ksa": "Saudi Arabia", "mex": "Mexico", "ned": "Netherlands", "nonfifa": "International", "nor": "Norway",
+    "par": "Paraguay", "per": "Peru", "por": "Portugal", "rsa": "South Africa", "rus": "Russia",
+    "sco": "Scotland", "slv": "El Salvador", "swe": "Sweden", "tur": "Turkey", "uefa": "Europe",
+    "uru": "Uruguay", "usa": "USA", "ven": "Venezuela"}
+STANDINGS = "https://site.api.espn.com/apis/v2/sports/soccer/{slug}/standings"
+LEAGUES = "https://site.api.espn.com/apis/site/v2/leagues/dropdown?sport=soccer&limit=1000"
+
+
+def league_slugs():
+    try:
+        return {l["id"]: l["slug"] for l in get(LEAGUES).get("leagues", [])}
+    except Exception as e:
+        print("league list failed", e, file=sys.stderr)
+        return {}
+
+
+def standings(slug):
+    """team id -> {rank, pts, gp, of, group}"""
+    out = {}
+    try:
+        data = get(STANDINGS.format(slug=slug))
+    except Exception:
+        return out
+    groups = data.get("children") or ([data] if data.get("standings") else [])
+    for g in groups:
+        entries = (g.get("standings") or {}).get("entries") or []
+        for e in entries:
+            st = {x.get("name"): x.get("displayValue") for x in e.get("stats", [])}
+            tid = (e.get("team") or {}).get("id")
+            if tid and st.get("rank"):
+                out[tid] = {"rank": st.get("rank"), "pts": st.get("points"), "gp": st.get("gamesPlayed"),
+                            "of": len(entries), "group": g.get("name") if len(groups) > 1 else ""}
+    return out
+
+
+def scorers(comp):
+    goals = []
+    for d in comp.get("details") or []:
+        if not d.get("scoringPlay") or d.get("shootout"):
+            continue
+        ath = (d.get("athletesInvolved") or [{}])[0]
+        goals.append({"t": (d.get("team") or {}).get("id"), "n": ath.get("shortName") or ath.get("displayName") or "?",
+                      "m": (d.get("clock") or {}).get("displayValue", ""),
+                      "pk": bool(d.get("penaltyKick")), "og": bool(d.get("ownGoal"))})
+    return goals
+
+
 def team(c):
     t = c.get("team") or {}
     rec = next((r.get("summary") for r in c.get("records") or [] if r.get("type") == "total"), "")
-    return {"name": t.get("displayName") or t.get("name") or "?",
+    return {"id": t.get("id"), "name": t.get("displayName") or t.get("name") or "?",
             "short": t.get("shortDisplayName") or t.get("displayName") or "?",
             "abbr": t.get("abbreviation") or (t.get("displayName") or "?")[:3].upper(),
             "color": t.get("color") or "", "alt": t.get("alternateColor") or "",
@@ -119,6 +173,8 @@ def main():
     except Exception:
         cache = {}
 
+    slugs = league_slugs()
+    table_cache = {}
     matches = []
     for ev in events.values():
         comp = ev["competitions"][0]
@@ -134,12 +190,23 @@ def main():
             continue
         st = comp["status"]["type"]
         h, a = sides["home"], sides["away"]
+        lid = ev.get("uid", "").split("~l:")[-1].split("~")[0]
+        slug = slugs.get(lid, "")
+        if slug and slug not in table_cache:
+            table_cache[slug] = standings(slug)
+        table = table_cache.get(slug, {})
+        venue = comp.get("venue") or {}
+        addr = venue.get("address") or {}
         winner = "home" if h.get("winner") else "away" if a.get("winner") else ("draw" if st.get("completed") else "")
         matches.append({
             "id": ev["id"],
             "ts": ev["date"],
             "league": comp.get("altGameNote") or ev.get("season", {}).get("slug", ""),
-            "h": team(h), "a": team(a),
+            "h": dict(team(h), pos=table.get((h.get("team") or {}).get("id"))),
+            "a": dict(team(a), pos=table.get((a.get("team") or {}).get("id"))),
+            "country": COUNTRY.get(slug.split(".")[0], "") if slug else "",
+            "venue": ", ".join(x for x in (venue.get("fullName"), addr.get("city"), addr.get("country")) if x),
+            "goals": scorers(comp),
             "p": odds["p"], "dec": odds["dec"], "margin": odds["margin"], "ou": odds.get("ou"), "src": odds["src"],
             "state": st.get("state"),
             "clock": comp["status"].get("displayClock", ""),

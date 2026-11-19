@@ -206,6 +206,19 @@ body{padding-block:0 56px}
 @keyframes scrollx{to{transform:translateX(-50%)}}
 @keyframes spinBorder{to{--ang:360deg}}
 @media (prefers-reduced-motion:reduce){.track{animation:none!important}}
+
+.pos{flex:none;display:inline-flex;align-items:baseline;gap:4px;font-size:.68rem;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid rgba(255,200,61,.25);border-radius:6px;padding:0 6px;line-height:1.6}
+.pos small{font-weight:500;color:var(--muted);font-size:.64rem}
+.ctry{color:var(--ink);font-weight:600}
+.venue{font-size:.7rem;color:var(--faint);display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.venue svg{flex:none}
+.goals{display:flex;gap:6px;align-items:flex-start;font-size:.72rem;color:var(--muted);margin-top:2px;padding:5px 8px;border-radius:8px;background:var(--raise);border:1px solid var(--line)}
+.goals svg{flex:none;margin-top:3px;color:var(--accent)}
+.goals em{font-style:normal;color:var(--ink);font-weight:600;margin-right:2px}
+.goals .g{white-space:nowrap;margin-right:8px}
+.goals .g b{color:var(--accent);font-weight:600}
+.goals > div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.goals > div > div{display:flex;flex-wrap:wrap;column-gap:2px}
 </style>
 
 <section class="hero" id="hero">
@@ -323,9 +336,23 @@ function seg(id, opts, cur, set){
   $(id).querySelectorAll("button").forEach(b => b.onclick = () => { set(b.dataset.v); save(); render(); });
 }
 
+const pin = `<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>`;
+const ballIc = `<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.6 2.6-1.4 4.2H9.8L8.4 10.1z" fill="currentColor"/></svg>`;
+const ord = n => { n = +n; const s = ["th","st","nd","rd"], v = n % 100; return n + (s[(v-20)%10] || s[v] || s[0]); };
+function pos(t){
+  if (!t.pos || !t.pos.rank) return "";
+  const p = t.pos, tip = `${ord(p.rank)} of ${p.of}${p.group?` in ${p.group}`:""} · ${p.pts} pts from ${p.gp} games`;
+  return `<span class="pos" title="${esc(tip)}">${ord(p.rank)}<small>${p.pts} pts</small></span>`;
+}
+function goals(m){
+  if (!m.goals || !m.goals.length) return "";
+  const side = id => m.goals.filter(g => g.t === id).map(g => `<span class="g">${esc(g.n)} <b>${esc(g.m)}</b>${g.pk?" (pen)":""}${g.og?" (OG)":""}</span>`).join("");
+  const h = side(m.h.id), a = side(m.a.id);
+  return `<div class="goals">${ballIc}<div>${h?`<div><em>${esc(m.h.short)}</em> ${h}</div>`:""}${a?`<div><em>${esc(m.a.short)}</em> ${a}</div>`:""}</div></div>`;
+}
 function rowHtml(m, idx=0){
   const fs = favSide(m), fp = favP(m), [tn, tl] = tierOf(fp), w = winIdx(m.winner);
-  const team = (t, i) => `<div class="t ${i*2===fs?"fav":""}">${crest(t)}<span class="tn" title="${esc(t.name)}">${esc(t.name)}</span>${form(t.form)}${m.score?`<span class="sc">${esc(m.score[i] ?? "")}</span>`:""}</div>`;
+  const team = (t, i) => `<div class="t ${i*2===fs?"fav":""}">${crest(t)}<span class="tn" title="${esc(t.name)}">${esc(t.name)}</span>${pos(t)}${form(t.form)}${m.score?`<span class="sc">${esc(m.score[i] ?? "")}</span>`:""}</div>`;
   const cells = [["1","Home"],["X","Draw"],["2","Away"]].map(([lab,name],i)=>`<div class="cell ${i===fs?"fav":""} ${w===i?"hit":""}"><small>${lab} · ${name}</small><b>${pc(m.p[i])}</b></div>`).join("");
   const bar = `<div class="pbar"><span style="width:${m.p[0]}%;background:${fs===0?"var(--accent)":"var(--faint)"}"></span><span style="width:${m.p[1]}%;background:var(--line)"></span><span style="width:${m.p[2]}%;background:${fs===2?"var(--accent)":"var(--faint)"}"></span></div>`;
   const dc = m.p[fs] + m.p[1];
@@ -335,7 +362,7 @@ function rowHtml(m, idx=0){
   if (m.state === "post") status = w < 0 ? `<span class="status">${esc(m.detail)}</span>` : (w === fs ? `<span class="status ok">✓ Correct</span>` : `<span class="status bad">✗ ${w===1?"Draw":"Upset"}</span>`);
   return `<div class="row" style="--i:${idx}">
     <div class="time"><b>${hm(m.d).replace(/\s?[AP]M$/,"")}</b><small>${hm(m.d).slice(-2)} PT</small></div>
-    <div class="teams">${team(m.h,0)}${team(m.a,1)}<div class="league-sm">${esc(m.league)}</div></div>
+    <div class="teams">${team(m.h,0)}${team(m.a,1)}<div class="league-sm"><span class="ctry">${esc(m.country||"")}</span>${m.country?" · ":""}${esc(m.league)}</div>${m.venue?`<div class="venue" title="${esc(m.venue)}">${pin} ${esc(m.venue)}</div>`:""}${goals(m)}</div>
     <div class="x12w"><div class="x12">${cells}</div>${bar}</div>
     <div class="mk"><div><span>Not to lose</span><b>${pc(dc)}</b></div><div><span>Win odds</span><b>${m.dec[fs].toFixed(2)}</b></div>${ou}</div>
     <div class="st"><span class="tier t${tn}">${tl}</span>${status}${m.url?`<span class="status"><a href="${esc(m.url)}" target="_blank" rel="noopener">Match details ↗</a></span>`:""}</div>
@@ -371,11 +398,12 @@ function render(){
   seg("sortSeg", [["p","Chance"],["t","Time"],["l","League"]], st.sort, v => st.sort = v);
   const dayList = ms.filter(m => m.key === st.day);
   renderKpis(dayList);
-  const lgs = [...new Set(dayList.map(m=>m.league))].sort();
+  const lgs = [...new Set(dayList.map(m=>m.league))].sort((a,b)=>{ const ca=(dayList.find(m=>m.league===a)||{}).country||"", cb=(dayList.find(m=>m.league===b)||{}).country||""; return ca.localeCompare(cb)||a.localeCompare(b); });
+  const ctryOf = l => (dayList.find(m=>m.league===l)||{}).country || "";
   if (st.league && !lgs.includes(st.league)) st.league = "";
-  $("league").innerHTML = `<option value="">All leagues (${lgs.length})</option>` + lgs.map(l=>`<option ${l===st.league?"selected":""} value="${esc(l)}">${esc(l)}</option>`).join("");
+  $("league").innerHTML = `<option value="">All leagues (${lgs.length})</option>` + lgs.map(l=>`<option ${l===st.league?"selected":""} value="${esc(l)}">${esc(ctryOf(l) ? ctryOf(l)+" · "+l : l)}</option>`).join("");
   const q = st.q.toLowerCase();
-  let list = dayList.filter(m => favP(m) >= st.min && (!st.league || m.league === st.league) && (!q || (m.h.name+" "+m.a.name+" "+m.league).toLowerCase().includes(q)));
+  let list = dayList.filter(m => favP(m) >= st.min && (!st.league || m.league === st.league) && (!q || (m.h.name+" "+m.a.name+" "+m.league+" "+(m.country||"")+" "+(m.venue||"")+" "+(m.goals||[]).map(g=>g.n).join(" ")).toLowerCase().includes(q)));
   if (st.sort === "p") list.sort((a,b) => favP(b)-favP(a) || a.d-b.d);
   if (st.sort === "t") list.sort((a,b) => a.d-b.d || favP(b)-favP(a));
   if (st.sort === "l") list.sort((a,b) => a.league.localeCompare(b.league) || a.d-b.d);
