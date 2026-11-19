@@ -275,7 +275,7 @@ def main():
     matches = [m for m in matches if m["ts"] >= lo]
     matches.sort(key=lambda m: m["ts"])
     payload = {"generated": now.isoformat(timespec="minutes"), "matches": matches,
-               "history": [[v["ts"], v["p"], v["w"]] for v in hist.values()], "messi": messi()}
+               "history": [[v["ts"], v["p"], v["w"]] for v in hist.values()]}
     (HERE / "data.json").write_text(json.dumps(payload, ensure_ascii=False))
     tpl = (HERE / "template.html").read_text()
     html = tpl.replace("/*__DATA__*/null", json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"))

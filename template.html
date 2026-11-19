@@ -60,7 +60,7 @@ button,select,input{font:inherit;color:inherit}
 
 /* table */
 .board{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.thead,.row{display:grid;grid-template-columns:4.6rem minmax(0,1fr) 15.5rem 9.5rem 7rem;gap:14px;align-items:center;padding:10px 16px}
+.thead,.row{display:grid;grid-template-columns:4.6rem minmax(0,1fr) 15rem 9.5rem 8.8rem;gap:14px;align-items:center;padding:10px 16px}
 .thead{font-size:.7rem;color:var(--faint);border-bottom:1px solid var(--line);background:var(--raise);padding-block:7px;text-transform:uppercase;letter-spacing:.06em}
 .row{border-top:1px solid var(--line)}
 .row:first-of-type{border-top:0}
@@ -321,31 +321,120 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 @keyframes fadeIn{from{opacity:0}}
 @keyframes float{50%{transform:translateY(-4px) rotate(-2deg)}}
 @keyframes sweep{from{width:20%}to{width:80%}}
+
+/* hero video */
+.hero{min-height:min(720px,92vh)}
+.hero .hero-in{min-height:min(560px,70vh);justify-content:center}
+.hero-shade{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(5,7,10,.88) 0%,rgba(5,7,10,.55) 45%,rgba(5,7,10,.05) 75%),linear-gradient(0deg,var(--bg) 0%,transparent 30%)}
+@media (max-width:760px){.hero-shade{background:linear-gradient(180deg,rgba(5,7,10,.75),rgba(5,7,10,.35) 60%,var(--bg))}}
+.grain{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.07;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grainShift .4s steps(3) infinite}
+.vctl{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:150px;z-index:2;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(7,9,12,.5);color:var(--ink);display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(6px)}
+.vctl:hover{border-color:var(--accent);color:var(--accent)}
+.hero-grid{grid-template-columns:minmax(0,1fr)}
+.hero-copy{max-width:640px}
+@keyframes grainShift{0%{transform:translate(0,0)}33%{transform:translate(-8px,5px)}66%{transform:translate(6px,-7px)}}
+
+/* account buttons, panel, menu */
+.ghost{border:1px solid rgba(255,255,255,.14);background:transparent;color:var(--ink);font-weight:600;font-size:.85rem;padding:7px 14px;border-radius:99px;cursor:pointer;transition:border-color .2s,background .2s}
+.ghost:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.05)}
+.signin{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:var(--accent-ink);border:0}
+.signin:hover{background:linear-gradient(90deg,var(--accent),var(--accent-2));filter:brightness(1.08)}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--raise);border:1px solid var(--line);border-radius:12px;padding:3px;margin-right:28px}
+.auth-tabs button{border:0;background:none;color:var(--muted);font-weight:600;padding:8px;border-radius:9px;cursor:pointer}
+.auth-tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 0 rgba(255,255,255,.05),0 4px 14px rgba(0,0,0,.4)}
+.auth-form{display:flex;flex-direction:column;gap:8px}
+.auth-form h3{margin:8px 0 0;font-family:var(--display);font-size:1.3rem}
+.auth-form label{font-size:.78rem;color:var(--muted);margin-top:6px}
+.auth-form label small{color:var(--faint)}
+.auth-form input{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:.95rem;transition:border-color .2s,box-shadow .2s}
+.auth-form input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,200,61,.15)}
+.muted{color:var(--muted);font-size:.88rem;margin:0}
+.fine{color:var(--faint);font-size:.74rem;margin:2px 0 0;line-height:1.5}
+.err{color:var(--loss);font-size:.82rem;margin:0}
+.cta.wide{align-self:stretch;justify-content:center;margin-top:8px;border:0;cursor:pointer;animation:none}
+.acct-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--raise);border:1px solid var(--line)}
+.acct-card img{width:40px;height:40px;border-radius:50%}
+.acct-card b{display:block}.acct-card small{color:var(--muted);font-size:.78rem}
+.who-wrap{position:relative}
+.who{cursor:pointer;color:var(--ink);font:inherit;text-align:left}
+.who .av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink);overflow:hidden;flex:none}
+.who .av img{width:100%;height:100%;object-fit:cover}
+.menu{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px;box-shadow:0 20px 50px rgba(0,0,0,.5);display:flex;flex-direction:column;animation:rise .2s both;z-index:60}
+.menu-head{padding:10px 10px 8px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.menu-head b{display:block}.menu-head small{color:var(--muted);font-size:.76rem}
+.menu button{background:none;border:0;color:var(--ink);text-align:left;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:.88rem}
+.menu button:hover{background:var(--raise)}
+.menu .danger{color:var(--loss)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:var(--surface);color:var(--ink);border:1px solid rgba(255,200,61,.35);padding:10px 18px;border-radius:99px;font-size:.88rem;font-weight:600;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.toast.show{animation:toastIn .35s cubic-bezier(.2,.8,.2,1.2) both}
+@keyframes toastIn{from{transform:translate(-50%,20px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+
+/* favorites */
+.st-top{display:flex;align-items:center;gap:8px}
+.star{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:transparent;cursor:pointer;flex:none;transition:transform .2s,border-color .2s,background .2s}
+.star svg{fill:none;stroke:var(--muted);stroke-width:1.6;transition:fill .2s,stroke .2s}
+.star:hover{border-color:var(--accent);transform:scale(1.08)}
+.star:hover svg{stroke:var(--accent)}
+.star.on{border-color:var(--accent);background:rgba(255,200,61,.12)}
+.star.on svg{fill:var(--accent);stroke:var(--accent);animation:pop .4s cubic-bezier(.2,.8,.2,1.4)}
+.favday{border-color:rgba(255,200,61,.3)}
+.favday b{color:var(--accent)}
+.day.favday[aria-pressed="true"] b{color:var(--accent-ink)}
+.fav-empty{display:flex;flex-direction:column;align-items:center;gap:8px}
+.fav-empty b{font-size:1.05rem;color:var(--ink)}
+.fav-empty p{margin:0}
+.big-star svg{width:44px;height:44px;fill:rgba(255,200,61,.15);stroke:var(--accent);stroke-width:1.2;animation:float 3s ease-in-out infinite}
+.fav-cta{display:flex;gap:10px;margin-top:6px}
+.fav-cta .cta{border:0;cursor:pointer;animation:none}
+.row.saved{opacity:.8}
 </style>
 
 <nav class="nav" id="nav">
   <div class="nav-in">
     <a class="brand" href="#hero" aria-label="SOCCER Pred home"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.6 2.6-1.4 4.2H9.8L8.4 10.1z" fill="var(--accent-ink)"/><path d="M12 3v4.5M20.6 9.2l-5 0.9M17.3 19.4l-3.1-5.1M6.7 19.4l3.1-5.1M3.4 9.2l5 0.9"/></svg></span><span class="bname">SOCCER <span>Pred</span></span></a>
     <div class="links" id="links">
-      <a href="#board-top">Picks</a><a href="#messi">Messi</a><a href="#accuracy">Accuracy</a><a href="#method">Method</a>
+      <a href="#board-top">Picks</a><a href="#board-top" id="navFavs">Favorites</a><a href="#accuracy">Accuracy</a><a href="#method">Method</a>
     </div>
     <div class="acct" id="acct">
-      <button class="signin" id="signin" type="button">Sign in</button>
+      <button class="ghost" id="btnSignin" type="button">Sign in</button>
+      <button class="signin" id="btnSignup" type="button">Sign up</button>
     </div>
     <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </nav>
 <div class="auth" id="authPanel" hidden>
-  <div class="auth-card" role="dialog" aria-labelledby="authTitle">
+  <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
     <button class="auth-x" id="authClose" type="button" aria-label="Close">×</button>
-    <h3 id="authTitle">Sign in to SOCCER Pred</h3>
-    <p id="authMsg">SOCCER Pred signs you in with your Claude account. Open this page from claude.ai while signed in and your name appears here automatically.</p>
-    <a class="cta" href="https://claude.ai/login" target="_blank" rel="noopener"><span>Continue with Claude</span></a>
+    <div class="auth-tabs" role="tablist">
+      <button type="button" role="tab" id="tabUp" aria-selected="true">Sign up</button>
+      <button type="button" role="tab" id="tabIn" aria-selected="false">Sign in</button>
+    </div>
+    <form id="formUp" class="auth-form" novalidate>
+      <h3 id="authTitle">Create your account</h3>
+      <p class="muted">Save favorite games and see them on every device.</p>
+      <label for="upName">Display name</label>
+      <input id="upName" type="text" maxlength="40" autocomplete="nickname" required>
+      <label for="upTeam">Favorite team <small>(optional)</small></label>
+      <input id="upTeam" type="text" maxlength="60" placeholder="e.g. Real Madrid">
+      <p class="err" id="upErr" hidden></p>
+      <button class="cta wide" type="submit"><span>Create account</span></button>
+      <p class="fine" id="upFine"></p>
+    </form>
+    <form id="formIn" class="auth-form" hidden novalidate>
+      <h3>Welcome back</h3>
+      <div class="acct-card" id="inCard"></div>
+      <p class="err" id="inErr" hidden></p>
+      <button class="cta wide" type="submit" id="inBtn"><span>Sign in</span></button>
+      <p class="fine">No password to remember: your SOCCER Pred account is tied to the Claude account you are signed in with.</p>
+    </form>
   </div>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <section class="hero" id="hero">
-  <canvas id="fx" aria-hidden="true"></canvas>
-  <div class="hero-glow" aria-hidden="true"></div>
+  <canvas id="fx" role="img" aria-label="Animated stadium scene: a ball curls into the top corner of the net under floodlights"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <button class="vctl" id="vctl" type="button" aria-label="Pause video"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
+  <div class="hero-shade" aria-hidden="true"></div>
   <div class="hero-in">
     <div class="hero-grid">
       <div class="hero-copy">
@@ -354,7 +443,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         <p class="lede">Bookmaker odds turned into fair win probabilities for every priced match worldwide, ranked so the strongest favorites come first.</p>
         <a class="cta" href="#board-top"><span>See today's picks</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
       </div>
-      <aside class="messi" id="messi" aria-label="Lionel Messi this season"></aside>
     </div>
   </div>
   <div class="marquee" aria-label="Top upcoming picks"><div class="track" id="track"></div></div>
@@ -394,7 +482,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <a class="brand" href="#hero"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.6 2.6-1.4 4.2H9.8L8.4 10.1z" fill="var(--accent-ink)"/><path d="M12 3v4.5M20.6 9.2l-5 0.9M17.3 19.4l-3.1-5.1M6.7 19.4l3.1-5.1M3.4 9.2l5 0.9"/></svg></span><span class="bname">SOCCER <span>Pred</span></span></a>
       <p>Every priced football match worldwide, ranked by the favorite's fair win probability. Updated twice a day.</p>
     </div>
-    <div class="foot-col"><h4>App</h4><a href="#board-top">Today's picks</a><a href="#messi">Messi tracker</a><a href="#accuracy">Accuracy record</a></div>
+    <div class="foot-col"><h4>App</h4><a href="#board-top">Today's picks</a><a href="#board-top">My favorites</a><a href="#accuracy">Accuracy record</a></div>
     <div class="foot-col"><h4>Data</h4><a href="https://www.espn.com/soccer/" target="_blank" rel="noopener">ESPN scores &amp; odds ↗</a><span>Odds usually from DraftKings</span><span>Times in US Pacific (PT)</span></div>
     <div class="foot-col"><h4>Project</h4><a href="https://github.com/Moe1362/soccer-pred" target="_blank" rel="noopener">GitHub repository ↗</a><span id="footUpd"></span></div>
   </div>
@@ -424,6 +512,29 @@ const keys = [...new Set(ms.map(m => m.key))].sort();
 const st = { day: keys.includes(todayKey) ? todayKey : (keys.find(k => k >= todayKey) || keys[keys.length-1]), min: 65, sort: "p", league: "", q: "" };
 try { const s = JSON.parse(localStorage.getItem("sp-prefs") || "{}"); if (s.min != null) st.min = s.min; if (s.sort) st.sort = s.sort; } catch(e) {}
 const save = () => { try { localStorage.setItem("sp-prefs", JSON.stringify({min:st.min, sort:st.sort})); } catch(e) {} };
+
+/* account state (filled in by the accounts block at the end) */
+var session = null, profile = null, favs = new Map();
+const starSvg = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>`;
+function favIds(){ return session ? [...favs.keys()] : []; }
+function starBtn(id){ const on = !!session && favs.has(id);
+  return `<button type="button" class="star${on?" on":""}" data-fav="${esc(id)}" aria-pressed="${on}" aria-label="${on?"Remove from favorites":"Add to favorites"}" title="${on?"Remove from favorites":"Add to favorites"}">${starSvg}</button>`; }
+function renderFavs(){
+  const ids = favIds();
+  const live = ms.filter(m => favs.has(m.id) && session);
+  renderKpis(live);
+  $("league").innerHTML = `<option value="">All leagues</option>`;
+  if (!session) {
+    $("rows").innerHTML = `<div class="empty fav-empty"><div class="big-star">${starSvg}</div><b>Save the games you care about</b><p>Create a free account to star matches and find them here on any device.</p><div class="fav-cta"><button type="button" class="cta" onclick="document.getElementById('btnSignup')?.click()"><span>Sign up</span></button><button type="button" class="ghost" onclick="document.getElementById('btnSignin')?.click()">Sign in</button></div></div>`;
+    return;
+  }
+  if (!ids.length) { $("rows").innerHTML = `<div class="empty fav-empty"><div class="big-star">${starSvg}</div><b>No favorites yet</b><p>Tap the star on any match to add it here.</p></div>`; return; }
+  const rows = ids.map(id => ms.find(m => m.id === id) || {saved: favs.get(id)}).sort((a,b) => String(a.ts || a.saved.ts || "").localeCompare(String(b.ts || b.saved.ts || "")));
+  let i = 0;
+  $("rows").innerHTML = rows.map(m => m.saved ? `<div class="row saved" style="--i:${i++}"><div class="time"><b>${m.saved.ts ? new Intl.DateTimeFormat("en-US",{timeZone:TZ,month:"short",day:"numeric"}).format(new Date(m.saved.ts)) : "–"}</b><small>saved</small></div>
+      <div class="teams"><div class="t"><span class="tn">${esc(m.saved.home || "Match")}</span></div><div class="t"><span class="tn">${esc(m.saved.away || "")}</span></div><div class="league-sm">${esc([m.saved.country, m.saved.league].filter(Boolean).join(" · "))}</div></div>
+      <div class="x12w"><span class="status">This match is no longer in the live feed.</span></div><div class="mk"></div><div class="st"><div class="st-top">${starBtn(m.saved.id)}</div></div></div>` : rowHtml(m, i++)).join("");
+}
 
 function dayLabel(k){
   const base = new Date(todayKey+"T12:00:00Z"), d = new Date(k+"T12:00:00Z");
@@ -456,7 +567,8 @@ function renderKpis(list){
 }
 
 function renderDays(){
-  $("days").innerHTML = keys.map(k => { const [a,b] = dayLabel(k); const n = ms.filter(m=>m.key===k).length;
+  const nf = favIds().length;
+  $("days").innerHTML = `<button class="day favday" aria-pressed="${st.day==="fav"}" data-k="fav"><b>★ Favorites</b><small>${session ? nf+" saved" : "Sign in to save"}</small></button>` + keys.map(k => { const [a,b] = dayLabel(k); const n = ms.filter(m=>m.key===k).length;
     return `<button class="day" aria-pressed="${k===st.day}" data-k="${k}"><b>${a}</b><small>${b} · ${n} matches</small></button>`; }).join("");
   $("days").querySelectorAll("button").forEach(b => b.onclick = () => { st.day = b.dataset.k; st.league = ""; render(); });
 }
@@ -495,7 +607,7 @@ function rowHtml(m, idx=0){
     <div class="teams">${team(m.h,0)}${team(m.a,1)}<div class="league-sm"><span class="ctry">${esc(m.country||"")}</span>${m.country?" · ":""}${esc(m.league)}</div>${m.venue?`<div class="venue" title="${esc(m.venue)}">${pin} ${esc(m.venue)}</div>`:""}${goals(m)}</div>
     <div class="x12w"><div class="x12">${cells}</div>${bar}</div>
     <div class="mk"><div><span>Not to lose</span><b>${pc(dc)}</b></div><div><span>Win odds</span><b>${m.dec[fs].toFixed(2)}</b></div>${ou}</div>
-    <div class="st"><span class="tier t${tn}">${tl}</span>${status}${m.url?`<span class="status"><a href="${esc(m.url)}" target="_blank" rel="noopener">Match details ↗</a></span>`:""}</div>
+    <div class="st"><div class="st-top"><span class="tier t${tn}">${tl}</span>${starBtn(m.id)}</div>${status}${m.url?`<span class="status"><a href="${esc(m.url)}" target="_blank" rel="noopener">Match details ↗</a></span>`:""}</div>
   </div>`;
 }
 
@@ -526,6 +638,7 @@ function render(){
   renderDays();
   seg("minSeg", [["0","All"],["55","55%+"],["65","65%+"],["75","75%+"]], String(st.min), v => st.min = +v);
   seg("sortSeg", [["p","Chance"],["t","Time"],["l","League"]], st.sort, v => st.sort = v);
+  if (st.day === "fav") { renderFavs(); renderCal(); return; }
   const dayList = ms.filter(m => m.key === st.day);
   renderKpis(dayList);
   const lgs = [...new Set(dayList.map(m=>m.league))].sort((a,b)=>{ const ca=(dayList.find(m=>m.league===a)||{}).country||"", cb=(dayList.find(m=>m.league===b)||{}).country||""; return ca.localeCompare(cb)||a.localeCompare(b); });
@@ -580,101 +693,257 @@ render();
   $("track").innerHTML = html + html.replace(/class="pick"/g,'class="pick" aria-hidden="true"');
 })();
 
-/* hero: animated pitch lines + drifting ball particles on canvas */
+/* hero video: an original, code-rendered night-match scene (stadium lights, crowd, a curling shot into the net) */
 (function(){
   const c = $("fx"), x = c.getContext("2d"); if (!x) return;
-  let w, h, dpr, pts = [], t0 = performance.now(), raf;
-  function size(){ dpr = Math.min(2, devicePixelRatio || 1); w = c.clientWidth; h = c.clientHeight; c.width = w*dpr; c.height = h*dpr; x.setTransform(dpr,0,0,dpr,0,0);
-    pts = Array.from({length: Math.round(w*h/14000)}, () => ({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.6+.4, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25, a:Math.random()})); }
-  function frame(now){
-    const t = (now - t0)/1000; x.clearRect(0,0,w,h);
-    // perspective pitch grid
-    x.save(); x.strokeStyle = "rgba(255,255,255,.06)"; x.lineWidth = 1;
-    const hz = h*.35, cx = w/2;
-    for (let i=-12;i<=12;i++){ x.beginPath(); x.moveTo(cx+i*18, hz); x.lineTo(cx+i*w*.18, h+40); x.stroke(); }
-    for (let k=0;k<14;k++){ const p = ((k + (t*.35)%1)/14); const y = hz + Math.pow(p,2.2)*(h-hz+40); x.globalAlpha = p; x.beginPath(); x.moveTo(0,y); x.lineTo(w,y); x.stroke(); }
-    x.globalAlpha = 1; x.restore();
-    // centre circle glow
-    const g = x.createRadialGradient(cx, h*.78, 0, cx, h*.78, w*.35); g.addColorStop(0,"rgba(255,200,61,.10)"); g.addColorStop(1,"transparent"); x.fillStyle = g; x.fillRect(0,0,w,h);
-    // particles
-    for (const p of pts){ p.x += p.vx; p.y += p.vy; if (p.x<0) p.x=w; if (p.x>w) p.x=0; if (p.y<0) p.y=h; if (p.y>h) p.y=0;
-      x.beginPath(); x.arc(p.x,p.y,p.r,0,7); x.fillStyle = `rgba(255,${180+Math.round(60*Math.sin(t+p.a*6))},120,${.25+.35*Math.abs(Math.sin(t*.8+p.a*9))})`; x.fill(); }
-    // shooting "ball" arcs
-    const k = (t*.22)%1, bx = -40 + k*(w+80), by = h*.55 - Math.sin(k*Math.PI)*h*.35;
-    const tr = x.createLinearGradient(bx-120, by, bx, by); tr.addColorStop(0,"transparent"); tr.addColorStop(1,"rgba(255,200,61,.55)");
-    x.strokeStyle = tr; x.lineWidth = 2; x.beginPath(); for (let i=0;i<=20;i++){ const kk = Math.max(0,k - (20-i)*.004), xx = -40 + kk*(w+80), yy = h*.55 - Math.sin(kk*Math.PI)*h*.35; i?x.lineTo(xx,yy):x.moveTo(xx,yy);} x.stroke();
-    x.beginPath(); x.arc(bx,by,3.5,0,7); x.fillStyle = "#fff"; x.shadowColor = "#ffc83d"; x.shadowBlur = 16; x.fill(); x.shadowBlur = 0;
-    if (!reduce) raf = requestAnimationFrame(frame);
+  let w = 0, h = 0, dpr = 1, raf = 0, playing = !reduce, start = performance.now(), pausedAt = 0;
+  let crowd = [], confetti = [], netHit = 0, flashes = [];
+  const P = 7.5;                       // loop length in seconds
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  function size(){
+    dpr = Math.min(2, devicePixelRatio || 1); w = c.clientWidth; h = c.clientHeight;
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    crowd = Array.from({length: Math.round(w * 0.9)}, () => ({ x: Math.random() * w, y: rnd(.2, .47) * h, r: rnd(.8, 2.4),
+      c: ["#ffc83d","#ff5f45","#7c5cff","#e8edf5","#3ddc97","#5aa9ff"][Math.floor(Math.random() * 6)], a: rnd(.15, .55), p: Math.random() * 6 }));
   }
-  size(); addEventListener("resize", () => { size(); if (reduce) frame(performance.now()); });
-  frame(performance.now());
-  document.addEventListener("visibilitychange", () => { if (document.hidden) cancelAnimationFrame(raf); else if (!reduce) raf = requestAnimationFrame(frame); });
+  const goal = () => { const gw = Math.min(w * .26, 360), gx = w * .64, gy = h * .5; return { x: gx, y: gy, w: gw, h: gw * .38 }; };
+  function ballAt(k){ // k: 0..1 along the shot
+    const g = goal(), s = { x: w * .22, y: h * .93 }, e = { x: g.x + g.w * .86, y: g.y + g.h * .2 }, c1 = { x: w * .62, y: h * .98 };
+    const u = 1 - k; return { x: u*u*s.x + 2*u*k*c1.x + k*k*e.x, y: u*u*s.y + 2*u*k*c1.y + k*k*e.y, r: (1 - k * .72) * Math.max(10, w * .014) };
+  }
+  function frame(now){
+    const t = ((now - start) / 1000) % P;
+    const shotK = Math.min(1, Math.max(0, (t - 1.0) / 1.5)), ease = shotK < 1 ? 1 - Math.pow(1 - shotK, 2.2) : 1;
+    const hitT = t - 2.5;                                  // seconds since the ball hit the net
+    if (hitT >= 0 && hitT < 0.05 && netHit < .5) { netHit = 1; burst(); }
+    netHit *= .94;
+    const zoom = 1 + .05 * (t / P) + (hitT > 0 && hitT < .35 ? .012 * Math.sin(hitT * 60) : 0);
+    x.setTransform(dpr * zoom, 0, 0, dpr * zoom, -w * dpr * (zoom - 1) * .6, -h * dpr * (zoom - 1) * .4);
+    // sky
+    let g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, "#04060a"); g.addColorStop(.45, "#0a1220"); g.addColorStop(1, "#05070a");
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    // stands + crowd
+    x.fillStyle = "#0b111b"; x.beginPath(); x.moveTo(0, h * .18); x.quadraticCurveTo(w * .5, h * .1, w, h * .18); x.lineTo(w, h * .5); x.lineTo(0, h * .5); x.fill();
+    for (const d of crowd) { x.globalAlpha = d.a * (.7 + .3 * Math.sin(t * 2 + d.p) + (hitT > 0 && hitT < 2 ? .5 : 0)); x.fillStyle = d.c; x.beginPath(); x.arc(d.x, d.y + (hitT > 0 && hitT < 2 ? -Math.abs(Math.sin(t * 9 + d.p)) * 2 : 0), d.r, 0, 7); x.fill(); }
+    x.globalAlpha = 1;
+    // camera flashes in the crowd
+    if (Math.random() < (hitT > 0 && hitT < 2.5 ? .55 : .06)) flashes.push({ x: Math.random() * w, y: rnd(.2, .46) * h, life: 1 });
+    x.globalCompositeOperation = "lighter";
+    for (const f of flashes) { const rg = x.createRadialGradient(f.x, f.y, 0, f.x, f.y, 14 * f.life); rg.addColorStop(0, `rgba(255,255,255,${.9 * f.life})`); rg.addColorStop(1, "transparent"); x.fillStyle = rg; x.fillRect(f.x - 16, f.y - 16, 32, 32); f.life -= .08; }
+    flashes = flashes.filter(f => f.life > 0);
+    // floodlights and beams
+    [[.08, .06], [.36, .02], [.64, .02], [.92, .06]].forEach(([fx, fy], i) => {
+      const lx = fx * w, ly = fy * h, sway = Math.sin(t * .6 + i) * .04;
+      const bg = x.createLinearGradient(lx, ly, w * (.5 + sway), h * .9); bg.addColorStop(0, "rgba(255,240,200,.22)"); bg.addColorStop(1, "rgba(255,240,200,0)");
+      x.fillStyle = bg; x.beginPath(); x.moveTo(lx - 8, ly); x.lineTo(w * (.5 + sway) - w * .28, h); x.lineTo(w * (.5 + sway) + w * .28, h); x.lineTo(lx + 8, ly); x.fill();
+      const gl = x.createRadialGradient(lx, ly, 0, lx, ly, 90); gl.addColorStop(0, "rgba(255,250,235,.95)"); gl.addColorStop(.12, "rgba(255,225,160,.5)"); gl.addColorStop(1, "transparent");
+      x.fillStyle = gl; x.fillRect(lx - 90, ly - 90, 180, 180);
+    });
+    x.globalCompositeOperation = "source-over";
+    // pitch with mowing stripes in perspective
+    const hz = h * .48;
+    for (let i = 0; i < 16; i++) { const y0 = hz + Math.pow(i / 16, 1.8) * (h - hz), y1 = hz + Math.pow((i + 1) / 16, 1.8) * (h - hz);
+      x.fillStyle = i % 2 ? "#0f3a24" : "#12452b"; x.fillRect(0, y0, w, y1 - y0 + 1); }
+    g = x.createRadialGradient(w * .55, h * .75, 0, w * .55, h * .75, w * .6); g.addColorStop(0, "rgba(255,240,200,.16)"); g.addColorStop(1, "rgba(0,0,0,.35)");
+    x.fillStyle = g; x.fillRect(0, hz, w, h - hz);
+    // box lines
+    const G = goal(); x.strokeStyle = "rgba(255,255,255,.35)"; x.lineWidth = 1.5;
+    x.beginPath(); x.moveTo(G.x - G.w * .55, G.y + G.h + 2); x.lineTo(G.x - G.w * .9, h * .78); x.lineTo(G.x + G.w * 1.9, h * .78); x.lineTo(G.x + G.w * 1.45, G.y + G.h + 2); x.stroke();
+    x.beginPath(); x.moveTo(0, G.y + G.h + 2); x.lineTo(w, G.y + G.h + 2); x.stroke();
+    // net (mesh bulges where the ball hits)
+    const hx = G.x + G.w * .86, hy = G.y + G.h * .2;
+    x.strokeStyle = "rgba(230,240,255,.28)"; x.lineWidth = .8;
+    const cols = 22, rows = 9, depth = G.w * .12;
+    const pt = (i, j) => { const px = G.x + i / cols * G.w, py = G.y + j / rows * G.h; const d = Math.hypot(px - hx, py - hy), push = netHit * Math.max(0, 1 - d / (G.w * .35)) * depth * 1.6;
+      return [px + push * .5 + depth * .35, py - push * .25 + depth * .2]; };
+    for (let i = 0; i <= cols; i++) { x.beginPath(); for (let j = 0; j <= rows; j++) { const [a, b] = pt(i, j); j ? x.lineTo(a, b) : x.moveTo(a, b); } x.stroke(); }
+    for (let j = 0; j <= rows; j++) { x.beginPath(); for (let i = 0; i <= cols; i++) { const [a, b] = pt(i, j); i ? x.lineTo(a, b) : x.moveTo(a, b); } x.stroke(); }
+    // goal frame
+    x.strokeStyle = "#f4f6fa"; x.lineWidth = Math.max(3, G.w * .018); x.lineCap = "round"; x.shadowColor = "rgba(255,255,255,.6)"; x.shadowBlur = 10;
+    x.beginPath(); x.moveTo(G.x, G.y + G.h); x.lineTo(G.x, G.y); x.lineTo(G.x + G.w, G.y); x.lineTo(G.x + G.w, G.y + G.h); x.stroke(); x.shadowBlur = 0;
+    // ball, with trail and spin
+    if (t > .6 && t < 4.6) {
+      const k = t < 1 ? 0 : ease; const B = hitT > 0 ? (() => { const e = ballAt(1); return { x: e.x + Math.min(hitT, .4) * 30, y: e.y + Math.pow(Math.max(0, hitT - .2), 2) * 120, r: e.r }; })() : ballAt(k);
+      if (hitT > 1.6 && hitT < 2.1) x.globalAlpha = 1 - (hitT - 1.6) / .5; if (hitT >= 2.1) x.globalAlpha = 0;
+      if (shotK > 0 && shotK < 1) for (let i = 1; i <= 14; i++) { const p = ballAt(Math.max(0, ease - i * .018)); x.fillStyle = `rgba(255,200,61,${.22 * (1 - i / 14)})`; x.beginPath(); x.arc(p.x, p.y, p.r * (1 - i / 22), 0, 7); x.fill(); }
+      x.fillStyle = "rgba(0,0,0,.35)"; x.beginPath(); x.ellipse(B.x + B.r * .3, Math.min(h * .97, B.y + B.r * 3.2), B.r * 1.1, B.r * .35, 0, 0, 7); x.fill();
+      const bgr = x.createRadialGradient(B.x - B.r * .35, B.y - B.r * .35, B.r * .1, B.x, B.y, B.r); bgr.addColorStop(0, "#ffffff"); bgr.addColorStop(1, "#b9c2cf");
+      x.fillStyle = bgr; x.beginPath(); x.arc(B.x, B.y, B.r, 0, 7); x.fill();
+      x.save(); x.translate(B.x, B.y); x.rotate(t * 9); x.fillStyle = "#1a1f27";
+      for (let i = 0; i < 5; i++) { const a = i * 1.2566; x.beginPath(); x.arc(Math.cos(a) * B.r * .62, Math.sin(a) * B.r * .62, B.r * .2, 0, 7); x.fill(); }
+      x.beginPath(); x.arc(0, 0, B.r * .26, 0, 7); x.fill(); x.restore(); x.globalAlpha = 1;
+    }
+    // goal flash and confetti
+    if (hitT > 0 && hitT < .6) { x.fillStyle = `rgba(255,230,170,${.28 * (1 - hitT / .6)})`; x.fillRect(0, 0, w, h); }
+    for (const p of confetti) { p.x += p.vx; p.y += p.vy; p.vy += .06; p.vx *= .99; p.rot += p.vr; p.life -= .006;
+      x.save(); x.translate(p.x, p.y); x.rotate(p.rot); x.globalAlpha = Math.max(0, p.life); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); }
+    x.globalAlpha = 1; confetti = confetti.filter(p => p.life > 0 && p.y < h + 20);
+    if (t > P - .25 && netHit < .05) netHit = 0;
+    if (playing) raf = requestAnimationFrame(frame);
+  }
+  function burst(){ const G = goal(); for (let i = 0; i < 160; i++) confetti.push({ x: G.x + G.w * rnd(.2, 1), y: G.y + rnd(-20, G.h), vx: rnd(-5, 5), vy: rnd(-9, -2), vr: rnd(-.3, .3), rot: Math.random() * 6, s: rnd(5, 10), life: 1,
+    c: ["#ffc83d","#ff5f45","#7c5cff","#ffffff","#3ddc97"][Math.floor(Math.random() * 5)] }); }
+  const btn = $("vctl");
+  function setPlaying(on){ playing = on; btn.setAttribute("aria-label", on ? "Pause video" : "Play video");
+    btn.innerHTML = on ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>' : '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7 5l12 7-12 7z"/></svg>';
+    if (on) { start += performance.now() - pausedAt; cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); } else { pausedAt = performance.now(); cancelAnimationFrame(raf); } }
+  btn.onclick = () => setPlaying(!playing);
+  size(); addEventListener("resize", () => { size(); if (!playing) frame(pausedAt || performance.now()); });
+  if (playing) raf = requestAnimationFrame(frame); else { pausedAt = start + 2600; netHit = 1; frame(pausedAt); setPlaying(false); }
+  document.addEventListener("visibilitychange", () => { if (document.hidden && playing) { cancelAnimationFrame(raf); pausedAt = performance.now(); } else if (!document.hidden && playing) { start += performance.now() - pausedAt; raf = requestAnimationFrame(frame); } });
 })();
 
-/* spotlight following the cursor on match rows */
-$("rows").addEventListener("pointermove", e => { const r = e.target.closest(".row"); if (!r) return; const b = r.getBoundingClientRect(); r.style.setProperty("--mx", (e.clientX-b.left)+"px"); r.style.setProperty("--my", (e.clientY-b.top)+"px"); });
-
-/* Messi hero card */
-(function(){
-  const M = DATA?.messi, el = $("messi");
-  if (!M) { el.hidden = true; return; }
-  const gpg = M.seasonGames ? (M.seasonGoals / M.seasonGames).toFixed(2) : "–";
-  const last = M.games.slice(0,5);
-  const next = ms.filter(m => m.state === "pre" && (m.h.id === M.teamId || m.a.id === M.teamId)).sort((a,b)=>a.d-b.d)[0];
-  const nextHtml = next ? (() => { const home = next.h.id === M.teamId, opp = home ? next.a : next.h, pM = next.p[home?0:2];
-    return `<div class="mx-next">Next: <b>${esc(M.team)}</b> ${home?"vs":"at"} <b>${esc(opp.name)}</b> · ${esc(dayLabel(next.key)[0])} ${hm(next.d)} PT · win chance <b>${pc(pM)}</b></div>`; })() : "";
-  el.innerHTML = `
-    <div class="mx-top"><div class="jersey" aria-hidden="true">${esc(M.jersey||"10")}</div>
-      <div><div class="mx-name">${esc(M.name)}</div><div class="mx-sub">${esc(M.team)} · ${esc(M.pos||"")}${M.age?` · age ${M.age}`:""}</div></div>
-      <span class="mx-live">Season</span></div>
-    <div class="mx-big"><span class="n" data-count="${esc(M.goals)}">${esc(M.goals)}</span><span class="l"><b>goals</b>this MLS season</span></div>
-    <div class="mx-stats">
-      <div><b data-count="${esc(M.assists)}">${esc(M.assists)}</b><small>Assists</small></div>
-      <div><b>${esc(M.apps)}</b><small>Apps (sub)</small></div>
-      <div><b>${gpg}</b><small>Goals / game</small></div>
-      <div><b data-count="${esc(M.shots)}">${esc(M.shots)}</b><small>Shots</small></div>
-    </div>
-    <div class="mx-h">Last ${last.length} matches</div>
-    <div class="mx-games">${last.map((g,k)=>`<div class="mg" style="--k:${k}"><span class="r ${esc(g.res)}">${esc(g.res)}</span>
-      <span class="o">${g.at==="@"?"at":"vs"} <b>${esc(g.opp)}</b> · ${new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",timeZone:TZ}).format(new Date(g.date))}</span>
-      <span class="ga">${g.g?`<span>${g.g} G</span>`:""}${g.a?`<span class="as">${g.a} A</span>`:""}</span><span class="sc">${esc(g.score)}</span></div>`).join("")}</div>
-    ${nextHtml}`;
-  if (!reduce) el.querySelectorAll("[data-count]").forEach(n => { const end = parseInt(n.dataset.count,10); if (!end) return; const t0 = performance.now()+500;
-    const step = now => { const k = Math.min(1, Math.max(0,(now-t0)/1200)), e = 1-Math.pow(1-k,4); n.textContent = Math.round(end*e); if (k<1) requestAnimationFrame(step); };
-    n.textContent = "0"; requestAnimationFrame(step); });
-})();
 
 /* navbar: mobile menu + active section */
 (function(){
   const b = $("burger"), L = $("links");
   b.onclick = () => { const o = L.classList.toggle("open"); b.setAttribute("aria-expanded", o); };
   L.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { L.classList.remove("open"); b.setAttribute("aria-expanded", false); }));
-  const secs = ["board-top","messi","accuracy","method"].map(id => document.getElementById(id)).filter(Boolean);
+  const secs = ["board-top","accuracy","method"].map(id => document.getElementById(id)).filter(Boolean);
   if ("IntersectionObserver" in window) {
-    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) L.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#"+e.target.id)); }), {rootMargin:"-40% 0px -55% 0px"});
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) L.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.id !== "navFavs" && a.getAttribute("href") === "#"+e.target.id)); }), {rootMargin:"-40% 0px -55% 0px"});
     secs.forEach(s => io.observe(s));
   }
 })();
 
-/* sign-in: Claude account through the artifact's user capability */
+/* accounts + favorites
+   Hosted on claude.ai: identity is verified by the viewer's Claude account (user capability);
+   the profile and favorites live in the artifact database under data/users/<id>/, private to that person.
+   Static copy (GitHub): no account backend, favorites are kept in this browser only. */
 (function(){
-  const box = $("acct"), panel = $("authPanel");
-  $("signin").onclick = () => { panel.hidden = false; };
-  $("authClose").onclick = () => { panel.hidden = true; };
-  panel.addEventListener("click", e => { if (e.target === panel) panel.hidden = true; });
-  addEventListener("keydown", e => { if (e.key === "Escape") panel.hidden = true; });
-  const use = window.claude && window.claude.use;
-  if (!use) { $("authMsg").textContent = "Accounts work in the Claude-hosted version of SOCCER Pred, which signs you in with your Claude account. This public copy is read-only."; return; }
-  window.claude.use("user").then(async user => {
-    if (!user) return;
-    const me = await user.me();
-    if (!me || !me.id) return;
-    const name = me.name || "Signed in";
-    const who = document.createElement("div"); who.className = "who"; who.title = "Signed in with your Claude account";
-    const img = document.createElement("img"); img.alt = ""; img.src = me.avatarUrl;
-    const txt = document.createElement("div"); const sm = document.createElement("small"); sm.textContent = "Signed in"; const bn = document.createElement("b"); bn.textContent = name;
-    txt.append(sm, bn); who.append(img, txt); box.replaceChildren(who);
-    if (me.name) { $("hello").textContent = "Welcome back, " + me.name.split(" ")[0] + "."; }
-  }).catch(() => {});
+  const box = $("acct"), panel = $("authPanel"), bIn = $("btnSignin"), bUp = $("btnSignup");
+  let me = null, col = null, mode = "loading";       // loading | hosted | guest (no Claude sign-in) | local (static copy)
+  const toast = msg => { const t = $("toast"); t.textContent = msg; t.hidden = false; t.classList.remove("show"); void t.offsetWidth; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => { t.hidden = true; }, 2600); };
+  const lsGet = k => { try { return localStorage.getItem(k); } catch(e) { return null; } };
+  const mem = {};   // fallback when browser storage is blocked
+  const lsSet = (k, v) => { mem[k] = v; try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(e) {} };
+  const stored = k => { const v = lsGet(k); return v != null ? v : (mem[k] ?? null); };
+
+  function openAuth(tab){
+    panel.hidden = false; showTab(tab || (profile ? "in" : "up"));
+    if (tab !== "in") setTimeout(() => $("upName").focus(), 50);
+  }
+  function closeAuth(){ panel.hidden = true; }
+  function showTab(tab){
+    $("tabUp").setAttribute("aria-selected", tab === "up"); $("tabIn").setAttribute("aria-selected", tab === "in");
+    $("formUp").hidden = tab !== "up"; $("formIn").hidden = tab !== "in";
+    $("upErr").hidden = $("inErr").hidden = true;
+    const card = $("inCard"); card.replaceChildren();
+    if (mode === "hosted" && me) {
+      const img = document.createElement("img"); img.src = me.avatarUrl; img.alt = "";
+      const d = document.createElement("div"); const b = document.createElement("b"); b.textContent = profile ? profile.name : (me.name || "Your Claude account");
+      const sm = document.createElement("small"); sm.textContent = profile ? "SOCCER Pred account found" : "No SOCCER Pred account yet";
+      d.append(b, sm); card.append(img, d);
+    } else {
+      const p = document.createElement("p"); p.className = "muted";
+      p.textContent = mode === "guest" ? "Sign in to claude.ai first, then reopen this page to use your account." :
+        mode === "local" ? "Accounts work in the hosted SOCCER Pred app. On this copy your favorites are saved in this browser." : "Checking your account…";
+      card.append(p);
+    }
+    $("upFine").textContent = mode === "hosted" ? "Your account is linked to your Claude sign-in, so there is no password to manage. Only you can see your favorites." :
+      mode === "local" ? "This copy has no account server. Your profile and favorites are saved in this browser only." :
+      "Sign in to claude.ai first, then reopen this page to create your account.";
+  }
+  bIn.onclick = () => openAuth("in");
+  bUp.onclick = () => openAuth("up");
+  $("tabUp").onclick = () => showTab("up"); $("tabIn").onclick = () => showTab("in");
+  $("authClose").onclick = closeAuth;
+  panel.addEventListener("click", e => { if (e.target === panel) closeAuth(); });
+  addEventListener("keydown", e => { if (e.key === "Escape") { closeAuth(); closeMenu(); } });
+
+  // sign up
+  $("formUp").addEventListener("submit", async e => {
+    e.preventDefault();
+    const name = $("upName").value.trim(), team = $("upTeam").value.trim(), err = $("upErr");
+    if (name.length < 2) { err.textContent = "Enter a display name of at least 2 characters."; err.hidden = false; $("upName").focus(); return; }
+    if (mode === "guest" || mode === "loading") { err.textContent = "Sign in to claude.ai first, then reopen this page."; err.hidden = false; return; }
+    const body = { name, team, createdAt: new Date().toISOString() };
+    try {
+      if (mode === "hosted") await col.doc("profile").set(body);
+      else lsSet("sp-local-profile", JSON.stringify(body));
+      profile = body; startSession(); closeAuth(); toast(`Account created. Welcome, ${name}!`);
+    } catch (x) { err.textContent = "Could not create the account right now. Try again in a moment."; err.hidden = false; }
+  });
+  // sign in
+  $("formIn").addEventListener("submit", e => {
+    e.preventDefault();
+    const err = $("inErr");
+    if (!profile) { err.textContent = mode === "guest" ? "Sign in to claude.ai first, then reopen this page." : "No account found. Create one on the Sign up tab."; err.hidden = false; return; }
+    startSession(); closeAuth(); toast(`Signed in as ${profile.name}`);
+  });
+  function sessionKey(){ return mode === "hosted" ? me.id : "local"; }
+  function startSession(){ lsSet("sp-session", sessionKey()); session = sessionKey(); refresh(); }
+  function logout(){ lsSet("sp-session", null); session = null; closeMenu(); if (st.day === "fav") st.day = keys.includes(todayKey) ? todayKey : keys[0]; refresh(); toast("You have been logged out"); }
+
+  // account menu
+  function closeMenu(){ const m = document.querySelector(".menu"); if (m) m.hidden = true; const c = document.querySelector(".who"); if (c) c.setAttribute("aria-expanded", false); }
+  function drawAcct(){
+    if (!session || !profile) {
+      box.replaceChildren(bIn, bUp);
+      $("hello").textContent = ""; return;
+    }
+    const chip = document.createElement("button"); chip.type = "button"; chip.className = "who"; chip.setAttribute("aria-haspopup", "menu"); chip.setAttribute("aria-expanded", "false");
+    const av = document.createElement("span"); av.className = "av";
+    if (mode === "hosted" && me.avatarUrl) { const img = document.createElement("img"); img.src = me.avatarUrl; img.alt = ""; av.append(img); } else av.textContent = profile.name.slice(0, 1).toUpperCase();
+    const tx = document.createElement("span"); const sm = document.createElement("small"); sm.textContent = "Signed in"; const b = document.createElement("b"); b.textContent = profile.name; tx.append(sm, b);
+    chip.append(av, tx);
+    const menu = document.createElement("div"); menu.className = "menu"; menu.hidden = true; menu.setAttribute("role", "menu");
+    const head = document.createElement("div"); head.className = "menu-head"; const hb = document.createElement("b"); hb.textContent = profile.name; const hs = document.createElement("small");
+    hs.textContent = profile.team ? `Supports ${profile.team}` : (mode === "hosted" ? "Linked to your Claude account" : "Saved in this browser"); head.append(hb, hs);
+    const fav = document.createElement("button"); fav.type = "button"; fav.setAttribute("role", "menuitem"); fav.textContent = `★ My favorites (${favs.size})`;
+    fav.onclick = () => { closeMenu(); st.day = "fav"; render(); $("board-top").scrollIntoView({behavior: reduce ? "auto" : "smooth"}); };
+    const out = document.createElement("button"); out.type = "button"; out.setAttribute("role", "menuitem"); out.className = "danger"; out.textContent = "Log out"; out.onclick = logout;
+    menu.append(head, fav, out);
+    chip.onclick = () => { const o = menu.hidden; menu.hidden = !o; chip.setAttribute("aria-expanded", o); };
+    const wrap = document.createElement("div"); wrap.className = "who-wrap"; wrap.append(chip, menu);
+    box.replaceChildren(wrap);
+    $("hello").textContent = `Welcome back, ${profile.name.split(" ")[0]}.`;
+  }
+  document.addEventListener("click", e => { if (!e.target.closest(".who-wrap")) closeMenu(); });
+  function refresh(){ drawAcct(); render(); }
+
+  // favorites
+  window.toggleFav = async function(id){
+    if (!session) { toast("Sign in to save favorite games"); openAuth(profile ? "in" : "up"); return; }
+    const m = ms.find(x => x.id === id);
+    if (favs.has(id)) {
+      favs.delete(id); render();
+      try { if (mode === "hosted") await col.doc("fav_" + id).delete(); else saveLocalFavs(); toast("Removed from favorites"); } catch (x) { toast("Could not remove it. Try again."); }
+    } else {
+      const rec = m ? { kind: "fav", id, ts: m.ts, home: m.h.name, away: m.a.name, league: m.league, country: m.country || "", addedAt: new Date().toISOString() } : { kind: "fav", id, addedAt: new Date().toISOString() };
+      favs.set(id, rec); render();
+      try { if (mode === "hosted") await col.doc("fav_" + id).set(rec); else saveLocalFavs(); toast("★ Added to favorites"); } catch (x) { favs.delete(id); render(); toast("Could not save it. Try again."); }
+    }
+  };
+  function saveLocalFavs(){ lsSet("sp-local-favs", JSON.stringify([...favs.values()])); }
+  $("rows").addEventListener("click", e => { const b = e.target.closest("[data-fav]"); if (b) toggleFav(b.dataset.fav); });
+  $("navFavs").addEventListener("click", () => { if (!session) { openAuth(profile ? "in" : "up"); return; } st.day = "fav"; render(); });
+
+  // boot
+  function bootLocal(){
+    mode = "local";
+    try { profile = JSON.parse(lsGet("sp-local-profile") || "null"); } catch(e) { profile = null; }
+    try { favs = new Map((JSON.parse(lsGet("sp-local-favs") || "[]")).map(f => [f.id, f])); } catch(e) { favs = new Map(); }
+    session = profile && stored("sp-session") === "local" ? "local" : null; refresh();
+  }
+  if (!(window.claude && window.claude.use)) { bootLocal(); return; }
+  Promise.all([window.claude.use("user"), window.claude.use("db")]).then(async ([user, db]) => {
+    if (!user || !db) { mode = "guest"; refresh(); return; }
+    me = await user.me();
+    if (!me || !me.id) { mode = "guest"; refresh(); return; }
+    mode = "hosted";
+    if (!$("upName").value) $("upName").value = me.name || "";
+    col = db.collection("data/users/" + me.id);
+    const timer = setTimeout(() => toast("Your account is taking a while to load…"), 10000);
+    col.onSnapshot(snap => {
+      clearTimeout(timer);
+      let prof = null; const f = new Map();
+      for (const d of snap.docs) { const v = d.data(); if (d.id === "profile") prof = v; else if (d.id.startsWith("fav_") && v) f.set(v.id, v); }
+      profile = prof; favs = f;
+      session = profile && stored("sp-session") === me.id ? me.id : null;
+      refresh();
+    }, () => { clearTimeout(timer); toast("Could not load your account. Reload the page to try again."); });
+  }).catch(() => { mode = "guest"; refresh(); });
 })();
+
 </script>
