@@ -1,0 +1,52 @@
+<div class="auth" id="authPanel" hidden>
+  <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="auth-x" id="authClose" type="button" aria-label="Close">×</button>
+    <div class="auth-tabs" role="tablist">
+      <button type="button" role="tab" id="tabUp" aria-selected="true">Sign up</button>
+      <button type="button" role="tab" id="tabIn" aria-selected="false">Sign in</button>
+    </div>
+    <form id="formUp" class="auth-form" novalidate>
+      <h3 id="authTitle">Create your account</h3>
+      <p class="muted">Save favorite games and see them on every device.</p>
+      <label for="upName">Display name</label>
+      <input id="upName" type="text" maxlength="40" autocomplete="nickname" required>
+      <label for="upTeam">Favorite team <small>(optional)</small></label>
+      <input id="upTeam" type="text" maxlength="60" placeholder="e.g. Real Madrid">
+      <p class="err" id="upErr" hidden></p>
+      <button class="cta wide" type="submit"><span>Create account</span></button>
+      <p class="fine" id="upFine"></p>
+    </form>
+    <form id="formIn" class="auth-form" hidden novalidate>
+      <h3>Welcome back</h3>
+      <div class="acct-card" id="inCard"></div>
+      <p class="err" id="inErr" hidden></p>
+      <button class="cta wide" type="submit" id="inBtn"><span>Sign in</span></button>
+      <p class="fine">No password to remember: your SOCCER Pred account is tied to the Claude account you are signed in with.</p>
+    </form>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div id="sp-board">
+  <section class="kpis" id="kpis" aria-label="Day summary"></section>
+  <section class="spots" id="spot" aria-label="Top picks of the day"></section>
+  <section class="bar">
+    <div class="days" id="days" role="group" aria-label="Day"></div>
+    <div class="filters">
+      <span class="flabel">Min. chance</span>
+      <div class="seg" id="minSeg" role="group" aria-label="Minimum win probability"></div>
+      <span class="flabel">Sort</span>
+      <div class="seg" id="sortSeg" role="group" aria-label="Sort by"></div>
+      <select id="league" aria-label="League"></select>
+      <input id="q" type="search" placeholder="Search team…" aria-label="Search team">
+    </div>
+  </section>
+  <section class="board" aria-label="Matches">
+    <div class="thead"><span>Time (PT)</span><span>Match</span><span>1X2 probability</span><span>Markets</span><span>Status</span></div>
+    <div id="rows"></div>
+  </section>
+  <section class="panel" id="accuracy">
+    <h2>Prediction accuracy</h2>
+    <p id="calNote"></p>
+    <div class="tablewrap"><table class="cal" id="cal"></table></div>
+  </section>
+</div>
