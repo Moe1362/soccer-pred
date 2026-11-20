@@ -25,6 +25,7 @@ css += (HERE / "extra.css").read_text()
 # --- JS changes for Webflow mounting ---
 js = js.replace("const DATA = /*__DATA__*/null;", "")
 js = js.replace('const c = $("fx"), x = c.getContext("2d");', 'const c = $("fx"); if (!c) return; const x = c.getContext("2d");')
+js = js.replace('const b = $("burger"), L = $("links");', 'const b = $("burger"), L = $("links"); if (!b || !L) return;')
 js = js.replace("  renderKpis(dayList);\n", "  renderKpis(dayList); renderSpot(dayList);\n")
 spot = r'''
 function renderSpot(list){
@@ -63,6 +64,8 @@ var ICONS = """ + icons + """;
 function ready(fn){ document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", fn) : fn(); }
 ready(function(){
   document.documentElement.classList.add("sp-on");
+  // Webflow can drop some id attributes; restore the ones the app relies on
+  [[".links","links"],[".footer","method"],[".hero","hero"],[".how-sec","how"],[".wrap","board-top"],[".track","track"]].forEach(function(p){ var n = document.querySelector(p[0]); if (n && !n.id) n.id = p[1]; });
   var mount = document.getElementById("board-top");
   if (!mount) return;
   var tmp = document.createElement("div"); tmp.innerHTML = SHELL;

@@ -459,3 +459,6 @@ h1,h2,h3,h4{margin:0}
 @media (prefers-reduced-motion:reduce){.aurora i,.grad,.cta-band{animation:none!important}}
 .acct a{white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 @media (max-width:479px){.nav-in{gap:10px}.acct{gap:6px}.acct .ghost,.acct .signin{padding:6px 11px;font-size:.78rem}.burger{padding:6px}}
+.nav{background:rgba(6,8,20,.86)}
+.cta-band .cta{align-self:center}
+.how-sec{padding-bottom:12px}
