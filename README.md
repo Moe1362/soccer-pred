@@ -29,3 +29,7 @@ The site is served by GitHub Pages from `index.html` on the `main` branch.
 python3 fetch_matches.py   # needs only the Python standard library
 open index.html
 ```
+
+## Webflow edition
+
+Live at https://soccer-pred.webflow.io. The Webflow page holds the layout and IX3 animations; `webflow/sp.js` (served from jsDelivr at a pinned commit) injects the styles and the live board and loads `data.json` from this repo. Rebuild it with `python3 webflow/build_webflow.py` after changing `template.html` or `webflow/extra.css`, then register the new commit's URL and SRI hash as a new script version in Webflow.
