@@ -42,6 +42,14 @@ function renderSpot(list){
 '''
 js = js.replace("function renderDays(){", spot + "\nfunction renderDays(){", 1)
 
+# 3D hero (three.js) with the 2D canvas scene as fallback
+a = js.index("/* hero video: an original")
+b = js.index("/* navbar: mobile menu")
+block = js[a:b]
+head = block.index("(function(){"); tail = block.rindex("})();")
+block = block[:head] + "function hero2d(){" + block[head+12:tail] + "}\n" + block[tail+5:]
+js = js[:a] + (HERE / "three_hero.js").read_text() + "\n" + block + "startHero3D().catch(function(e){ console.warn('3D hero unavailable, using 2D', e); hero2d(); });\n\n" + js[b:]
+
 shell = (HERE / "shell.html").read_text()
 icons = json.dumps({
   "mark": '<svg viewBox="0 0 24 24" fill="none" stroke="#021a12" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.6 2.6-1.4 4.2H9.8L8.4 10.1z" fill="#021a12"/><path d="M12 3v4.5M20.6 9.2l-5 0.9M17.3 19.4l-3.1-5.1M6.7 19.4l3.1-5.1M3.4 9.2l5 0.9"/></svg>',
